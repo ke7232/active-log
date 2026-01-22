@@ -17,17 +17,20 @@
       --radius:16px;
       --max: 1120px;
 
-      /* Power colors */
-      --accent:#ff4d00;      /* 能量橘 */
-      --accent2:#ff7a2f;     /* 橘亮 */
-      --blue:#2563eb;        /* 電藍 */
-      --blue2:#60a5fa;       /* 淺藍 */
-      --good:#16a34a;
-      --warn:#f59e0b;
-      --bad:#ef4444;
-
+      /* ===== Power Theme: Volt / Neon ===== */
+      --accent:#B7FF00;      /* Volt green */
+      --accent2:#7C3AED;     /* Electric purple */
+      --accent3:#FF2D95;     /* Hot pink (tiny use) */
+      --blue:#2563eb;        /* fallback */
       --chip:#f1f5f9;
       --ink:#0f172a;
+
+      /* Activity colors */
+      --run:#B7FF00;
+      --bike:#7C3AED;
+      --swim:#00D4FF;
+
+      --good:#16a34a;
     }
 
     *{box-sizing:border-box}
@@ -38,8 +41,9 @@
                    "PingFang TC","Noto Sans TC","Microsoft JhengHei", Arial, sans-serif;
       line-height:1.45;
       background:
-        radial-gradient(1000px 600px at 12% 0%, rgba(255,77,0,.18), rgba(255,77,0,0) 55%),
-        radial-gradient(900px 520px at 88% 5%, rgba(37,99,235,.16), rgba(37,99,235,0) 55%),
+        radial-gradient(900px 560px at 12% 0%, rgba(183,255,0,.22), rgba(183,255,0,0) 55%),
+        radial-gradient(900px 520px at 88% 5%, rgba(124,58,237,.18), rgba(124,58,237,0) 55%),
+        radial-gradient(760px 480px at 75% 25%, rgba(0,212,255,.14), rgba(0,212,255,0) 55%),
         linear-gradient(180deg, #ffffff 0%, var(--bg) 40%, #ffffff 100%);
     }
     a{color:inherit; text-decoration:none}
@@ -50,7 +54,7 @@
       display:flex; align-items:center; justify-content:space-between; gap:14px;
       padding: 14px 14px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,.78);
+      background: rgba(255,255,255,.80);
       backdrop-filter: blur(10px);
       border-radius: 18px;
       box-shadow: var(--shadow2);
@@ -59,17 +63,16 @@
     .logo{
       width:40px; height:40px; border-radius:14px;
       background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.65), rgba(255,255,255,0) 55%),
-        linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, #ffb38c 100%);
-      box-shadow: 0 14px 36px rgba(255,77,0,.22);
-      position:relative;
-      overflow:hidden;
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.70), rgba(255,255,255,0) 55%),
+        linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, var(--accent3) 100%);
+      box-shadow: 0 14px 36px rgba(124,58,237,.18);
+      position:relative; overflow:hidden;
     }
     .logo:after{
       content:"";
       position:absolute; inset:-30px -60px auto auto;
       width:120px; height:120px;
-      background: radial-gradient(circle at 30% 30%, rgba(37,99,235,.35), rgba(37,99,235,0) 60%);
+      background: radial-gradient(circle at 30% 30%, rgba(0,212,255,.35), rgba(0,212,255,0) 60%);
       transform: rotate(14deg);
     }
 
@@ -81,7 +84,7 @@
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 10px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.85);
       border-radius:999px;
       color:var(--muted);
       font-size:12px;
@@ -90,7 +93,7 @@
 
     .btn{
       border:1px solid rgba(15,23,42,.12);
-      background: rgba(255,255,255,.9);
+      background: rgba(255,255,255,.92);
       color:var(--ink);
       padding:9px 12px;
       border-radius:12px;
@@ -100,16 +103,16 @@
     }
     .btn:hover{background:#f8fafc}
     .btn.primary{
-      color:#fff;
-      border-color: rgba(255,77,0,.25);
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 70%);
-      box-shadow: 0 16px 38px rgba(255,77,0,.18);
-      font-weight:900;
+      color:#0b1220;
+      border-color: rgba(183,255,0,.35);
+      background: linear-gradient(135deg, var(--accent) 0%, #d9ff6a 60%);
+      box-shadow: 0 16px 38px rgba(183,255,0,.18);
+      font-weight:950;
     }
     .btn.primary:hover{filter: brightness(1.02)}
     .btn.ghost{
-      border-color: rgba(37,99,235,.18);
-      background: rgba(37,99,235,.06);
+      border-color: rgba(124,58,237,.18);
+      background: rgba(124,58,237,.06);
     }
 
     .layout{
@@ -120,7 +123,7 @@
     }
     .card{
       border:1px solid var(--border);
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.86);
       backdrop-filter: blur(10px);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -133,6 +136,14 @@
     }
     .hd h2{margin:0; font-size:13px; letter-spacing:.2px}
     .bd{padding:16px}
+
+    /* Gradient number (KPI) */
+    .gradText{
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, var(--accent3) 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
 
     /* Summary */
     .kpiGrid{
@@ -152,12 +163,9 @@
       content:"";
       position:absolute; inset:auto -40px -50px auto;
       width:140px; height:140px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,77,0,.16), rgba(255,77,0,0) 60%);
+      background: radial-gradient(circle at 30% 30%, rgba(124,58,237,.16), rgba(124,58,237,0) 60%);
       transform: rotate(12deg);
       pointer-events:none;
-    }
-    .kpi.blue:after{
-      background: radial-gradient(circle at 30% 30%, rgba(37,99,235,.16), rgba(37,99,235,0) 60%);
     }
     .kpi .label{margin:0 0 8px; color:var(--muted); font-size:12px}
     .kpi .value{margin:0; font-size:22px; font-weight:950; letter-spacing:.2px}
@@ -173,11 +181,14 @@
     .bar > i{
       display:block; height:100%;
       width: 60%;
-      background: linear-gradient(90deg, var(--accent), #ff9a61);
+      background: linear-gradient(90deg, var(--accent), #d9ff6a);
       border-radius:999px;
     }
-    .bar.blue > i{
-      background: linear-gradient(90deg, var(--blue), var(--blue2));
+    .bar.purple > i{
+      background: linear-gradient(90deg, var(--accent2), #a78bfa);
+    }
+    .bar.cyan > i{
+      background: linear-gradient(90deg, #00D4FF, #7dd3fc);
     }
 
     .mini{
@@ -192,18 +203,19 @@
       background: var(--chip);
       color: var(--muted);
       font-size:12px;
-      font-weight:900;
+      font-weight:950;
     }
     .chip b{color:var(--ink)}
     .chip .mark{
       width:8px; height:8px; border-radius:99px; display:inline-block;
       background: var(--accent);
     }
-    .chip.blue .mark{background: var(--blue)}
+    .chip.purple .mark{background: var(--accent2)}
+    .chip.cyan .mark{background: #00D4FF}
 
     .today{
-      border:1px dashed rgba(255,77,0,.40);
-      background: linear-gradient(180deg, rgba(255,77,0,.10), rgba(255,77,0,.05));
+      border:1px dashed rgba(124,58,237,.35);
+      background: linear-gradient(180deg, rgba(124,58,237,.10), rgba(124,58,237,.05));
       border-radius:16px;
       padding:14px;
       margin-top:12px;
@@ -214,6 +226,7 @@
     /* Feed */
     .feed{display:grid; gap:12px}
     .activity{
+      position:relative;
       display:grid;
       grid-template-columns: 64px 1fr;
       gap:12px;
@@ -222,7 +235,23 @@
       background: linear-gradient(180deg, #ffffff, #f8fafc);
       border-radius:16px;
       box-shadow: 0 1px 0 rgba(2,6,23,.04);
+      overflow:hidden;
     }
+
+    /* Left energy stripe */
+    .activity::before{
+      content:"";
+      position:absolute; left:0; top:0; bottom:0;
+      width:6px;
+      background: linear-gradient(180deg, var(--accent), rgba(183,255,0,.5));
+    }
+    .activity.bike::before{
+      background: linear-gradient(180deg, var(--accent2), rgba(124,58,237,.45));
+    }
+    .activity.swim::before{
+      background: linear-gradient(180deg, #00D4FF, rgba(0,212,255,.35));
+    }
+
     .icon{
       width:48px; height:48px; border-radius:14px;
       display:grid; place-items:center;
@@ -234,23 +263,16 @@
       overflow:hidden;
     }
     .icon.run{
-      border-color: rgba(255,77,0,.30);
-      box-shadow: 0 12px 24px rgba(255,77,0,.12);
+      border-color: rgba(183,255,0,.45);
+      box-shadow: 0 12px 24px rgba(183,255,0,.14);
     }
     .icon.bike{
-      border-color: rgba(37,99,235,.26);
-      box-shadow: 0 12px 24px rgba(37,99,235,.10);
+      border-color: rgba(124,58,237,.30);
+      box-shadow: 0 12px 24px rgba(124,58,237,.12);
     }
     .icon.swim{
-      border-color: rgba(14,165,233,.26);
-      box-shadow: 0 12px 24px rgba(14,165,233,.10);
-    }
-    .icon:after{
-      content:"";
-      position:absolute; inset:-18px -38px auto auto;
-      width:90px; height:90px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,77,0,.22), rgba(255,77,0,0) 60%);
-      transform: rotate(18deg);
+      border-color: rgba(0,212,255,.30);
+      box-shadow: 0 12px 24px rgba(0,212,255,.10);
     }
 
     .activity h3{margin:0; font-size:14px}
@@ -266,9 +288,9 @@
       border:1px solid rgba(15,23,42,.08);
       color: var(--ink);
       font-size:12px;
-      font-weight:900;
+      font-weight:950;
     }
-    .rpe{color: var(--muted); font-weight:900;}
+    .rpe{color: var(--muted); font-weight:950;}
     .rpe b{color: var(--ink)}
 
     .tag{
@@ -279,7 +301,7 @@
       background: rgba(255,255,255,.85);
       color: var(--muted);
       font-size:12px;
-      font-weight:900;
+      font-weight:950;
     }
     .tag i{
       width:8px; height:8px; border-radius:999px; display:inline-block;
@@ -308,7 +330,7 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Training Feed</h1>
-          <div class="sub">白底 Power 風格：Summary + Activities（橘 x 藍）</div>
+          <div class="sub">Volt / Neon · 白底 Power（左側能量色條 + KPI 漸層字）</div>
         </div>
       </div>
       <div class="right">
@@ -330,30 +352,33 @@
           <div class="kpiGrid">
             <div class="kpi">
               <p class="label">跑步</p>
-              <p class="value"><span id="runKm">0</span> <span class="unit">km</span></p>
+              <p class="value"><span id="runKm" class="gradText">0</span> <span class="unit">km</span></p>
               <div class="bar"><i id="barRun"></i></div>
             </div>
-            <div class="kpi blue">
+
+            <div class="kpi">
               <p class="label">自行車</p>
-              <p class="value"><span id="bikeHr">0</span> <span class="unit">hr</span></p>
-              <div class="bar blue"><i id="barBike"></i></div>
+              <p class="value"><span id="bikeHr" class="gradText">0</span> <span class="unit">hr</span></p>
+              <div class="bar purple"><i id="barBike"></i></div>
             </div>
-            <div class="kpi blue">
+
+            <div class="kpi">
               <p class="label">游泳</p>
-              <p class="value"><span id="swimM">0</span> <span class="unit">m</span></p>
-              <div class="bar blue"><i id="barSwim"></i></div>
+              <p class="value"><span id="swimM" class="gradText">0</span> <span class="unit">m</span></p>
+              <div class="bar cyan"><i id="barSwim"></i></div>
             </div>
+
             <div class="kpi">
               <p class="label">總時間</p>
-              <p class="value"><span id="totalHr">0</span> <span class="unit">hr</span></p>
+              <p class="value"><span id="totalHr" class="gradText">0</span> <span class="unit">hr</span></p>
               <div class="bar"><i id="barTotal"></i></div>
             </div>
           </div>
 
           <div class="mini">
             <span class="chip"><span class="mark"></span> 目標跑量：<b id="goalRun">35</b> km</span>
-            <span class="chip blue"><span class="mark"></span> 目標騎乘：<b id="goalBike">4.5</b> hr</span>
-            <span class="chip blue"><span class="mark"></span> 目標游泳：<b id="goalSwim">3000</b> m</span>
+            <span class="chip purple"><span class="mark"></span> 目標騎乘：<b id="goalBike">4.5</b> hr</span>
+            <span class="chip cyan"><span class="mark"></span> 目標游泳：<b id="goalSwim">3000</b> m</span>
           </div>
 
           <div class="today">
@@ -367,7 +392,7 @@
         </div>
 
         <footer style="padding:0 16px 16px; text-align:left">
-          建議：先把資料存 localStorage（免後端），三種 UI 都讀同一份資料方便比較。
+          這套配色比較「夜跑/賽車感」，白底依然很有 power。
         </footer>
       </div>
 
@@ -390,7 +415,7 @@
   </div>
 
   <script>
-    // ====== 假資料（之後可接 localStorage / Google Sheet） ======
+    // ====== 假資料 ======
     const data = {
       lastSync: new Date().toISOString().slice(0,10),
       goals: { runKm: 35, bikeHr: 4.5, swimM: 3000, totalHr: 9.0 },
@@ -456,10 +481,16 @@
       if (type === "Swim") return "swim";
       return "";
     }
+    function cardClass(type){
+      if (type === "Run") return "run";
+      if (type === "Bike") return "bike";
+      if (type === "Swim") return "swim";
+      return "";
+    }
 
     const feed = $("feed");
     feed.innerHTML = data.activities.map(a => `
-      <div class="activity">
+      <div class="activity ${cardClass(a.type)}">
         <div class="icon ${iconClass(a.type)}" aria-hidden="true">${iconFor(a.type)}</div>
         <div>
           <h3>${a.title} <span class="rpe">· RPE <b>${a.rpe}</b></span></h3>
@@ -474,7 +505,7 @@
     `).join("");
 
     // done state
-    const DONE_KEY = "training_feed_light_done";
+    const DONE_KEY = "training_feed_volt_done";
     function refreshDone(){
       const done = localStorage.getItem(DONE_KEY) === "1";
       $("markDone").textContent = done ? "已完成 ✅" : "標記完成";
@@ -493,7 +524,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "training-feed-light-sample.json";
+      a.download = "training-feed-volt-sample.json";
       document.body.appendChild(a);
       a.click();
       a.remove();
