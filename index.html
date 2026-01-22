@@ -3,195 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ActiveLog | 賽車級運動儀表</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Noto+Sans+TC:wght@500;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>ActiveLog | 運動戰術儀表板</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Noto+Sans+TC:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --petronas: #00A19B;
-            --bg: #050505;
-            --panel: #0f0f0f;
-            --accent: #1a1a1a;
-            --glass: rgba(255, 255, 255, 0.03);
+            --f1-red: #E10600;
+            --bg-darker: #050505;
+            --panel-bg: #111111;
+            --border-glow: rgba(0, 161, 155, 0.3);
+            --carbon-texture: radial-gradient(circle, #1a1a1a 1px, transparent 1px);
         }
 
         body {
-            background-color: var(--bg);
+            background-color: var(--bg-darker);
             color: #fff;
             font-family: 'Noto Sans TC', sans-serif;
             margin: 0;
             padding: 10px;
             display: flex;
             flex-direction: column;
+            gap: 15px;
+        }
+
+        /* 頂部標題 */
+        header {
+            border-left: 6px solid var(--petronas);
+            padding: 15px;
+            background: linear-gradient(90deg, #151515 0%, transparent 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        /* 方塊網格系統 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* 手機端兩列 */
             gap: 10px;
         }
 
-        /* 標題區：強化金屬感 */
-        header {
-            background: linear-gradient(180deg, #151515 0%, #000 100%);
-            padding: 20px;
-            border: 1px solid var(--accent);
-            border-bottom: 4px solid var(--petronas);
-            text-align: center;
-            border-radius: 4px;
+        /* 大方塊佔據兩格 */
+        .block-large {
+            grid-column: span 2;
         }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            margin: 0;
-            font-size: 1.5rem;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px var(--petronas);
-        }
-
-        /* 方塊容器 */
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 12px;
-        }
-
-        /* 數據方塊樣式 */
-        .block {
-            background: var(--panel);
-            border: 2px solid var(--accent);
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 2px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
-        }
-
-        .block::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0;
-            width: 4px; height: 100%;
-            background: var(--petronas);
-        }
-
-        .label {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--petronas);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem;
-            margin: 10px 0;
-            display: block;
-        }
-
-        .sub-value {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        /* 強力按鈕樣式 */
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-
-        .f1-btn-block {
-            background: var(--accent);
-            border: 1px solid #333;
-            color: #fff;
+        /* 模組方塊基礎樣式 */
+        .card {
+            background-color: var(--panel-bg);
+            border: 1px solid #222;
             padding: 15px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.2s;
+            position: relative;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
 
-        .f1-btn-block:active {
-            background: var(--petronas);
-            color: #000;
-            box-shadow: 0 0 20px var(--petronas);
+        /* 模擬 F1 儀表板的轉速燈條 */
+        .rev-limiter {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            display: flex;
+            gap: 2px;
+        }
+        .rev-limiter div { flex: 1; height: 100%; background: #333; }
+        .rev-limiter .active-g { background: var(--petronas); box-shadow: 0 0 8px var(--petronas); }
+        .rev-limiter .active-r { background: var(--f1-red); box-shadow: 0 0 8px var(--f1-red); }
+
+        .card-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
         }
 
-        /* 特殊狀態色 */
-        .warning { border-left-color: #ffde00 !important; }
-        .danger { border-left-color: #ff0000 !important; }
+        .card-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin: 5px 0;
+            color: var(--f1-white);
+        }
 
-        /* 進度條 */
-        .progress-track {
+        .card-unit { font-size: 0.8rem; color: var(--petronas); margin-left: 5px; }
+
+        .card-footer {
+            font-size: 0.7rem;
+            color: #555;
+            border-top: 1px solid #222;
+            padding-top: 5px;
+            margin-top: 5px;
+        }
+
+        /* 進度條樣式 */
+        .progress-box {
+            width: 100%;
+            height: 8px;
             background: #000;
-            height: 6px;
             margin-top: 10px;
+            border: 1px solid #333;
         }
-        .progress-fill {
-            background: var(--petronas);
+        .progress-bar {
             height: 100%;
+            background: var(--petronas);
             box-shadow: 0 0 10px var(--petronas);
         }
 
+        /* 按鈕樣式 (導航) */
+        .nav-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+        .nav-item {
+            background: #151515;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        .nav-item.active {
+            border-bottom: 3px solid var(--petronas);
+            color: var(--petronas);
+        }
+
+        /* 電腦端佈局優化 */
         @media (min-width: 768px) {
-            body { padding: 30px; max-width: 1200px; margin: auto; }
-            .grid-layout { grid-template-columns: repeat(3, 1fr); }
-            .nav-grid { grid-template-columns: repeat(5, 1fr); }
+            body { padding: 40px; }
+            .dashboard-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+            .card-value { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>ACTIVE_LOG // v1.4</h1>
+    <h1>DASHBOARD // <span style="color:var(--petronas)">AMG.F1W14</span></h1>
+    <div style="font-family:'Share Tech Mono'; font-size: 0.8rem;">22:11:37</div>
 </header>
 
-<div class="nav-grid">
-    <div class="f1-btn-block">Status</div>
-    <div class="f1-btn-block">Zones</div>
-    <div class="f1-btn-block" style="border-color: var(--petronas);">TSS</div>
-    <div class="f1-btn-block">History</div>
-    <div class="f1-btn-block">Setup</div>
+<div class="nav-bar">
+    <div class="nav-item active">Live</div>
+    <div class="nav-item">Log</div>
+    <div class="nav-item">Map</div>
+    <div class="nav-item">Data</div>
 </div>
 
-<div class="grid-layout">
-    <div class="block">
-        <div class="label">Marathon Goal Progress</div>
-        <div class="value">75<span style="font-size: 1rem">%</span></div>
-        <div class="sub-value">Target: 4:40:00</div>
-        <div class="progress-track"><div class="progress-fill" style="width: 75%"></div></div>
+<div class="dashboard-grid">
+    
+    <div class="card block-large" style="border-right: 4px solid var(--petronas);">
+        <div class="rev-limiter">
+            <div class="active-g"></div><div class="active-g"></div><div class="active-g"></div>
+            <div class="active-g"></div><div class="active-g"></div><div class="active-g"></div>
+            <div class="active-g"></div><div class="active-g"></div><div></div><div></div>
+        </div>
+        <div class="card-label">Marathon Target (4:40:00)</div>
+        <div class="card-value">75<span class="card-unit">%</span></div>
+        <div class="progress-box"><div class="progress-bar" style="width: 75%"></div></div>
+        <div class="card-footer">目前階段：耐力強化期 / 台北馬拉松</div>
     </div>
 
-    <div class="block">
-        <div class="label">Swim Pace / 100m</div>
-        <div class="value">1:42</div>
-        <div class="sub-value">Current Avg</div>
+    <div class="card">
+        <div class="card-label">Weekly TSS</div>
+        <div class="card-value">450</div>
+        <div class="card-footer" style="color: var(--f1-red);">▲ 偏高 - 注意恢復</div>
     </div>
 
-    <div class="block warning">
-        <div class="label">Weekly TSS</div>
-        <div class="value">450</div>
-        <div class="sub-value">Status: Heavy Load</div>
+    <div class="card">
+        <div class="card-label">Swim / 100m</div>
+        <div class="card-value">1:42</div>
+        <div class="card-footer">上次練習: 1:45</div>
     </div>
 
-    <div class="block danger">
-        <div class="label">Recovery Score</div>
-        <div class="value">55</div>
-        <div class="sub-value">Recommendation: Rest</div>
+    <div class="card">
+        <div class="card-label">Power FTP</div>
+        <div class="card-value">215<span class="card-unit">W</span></div>
+        <div class="card-footer">穩定度：高</div>
     </div>
 
-    <div class="block">
-        <div class="label">Days to Race</div>
-        <div class="value">38</div>
-        <div class="sub-value">Japan Karuizawa / Tokyo</div>
+    <div class="card">
+        <div class="card-label">Days to Race</div>
+        <div class="card-value" style="color: var(--f1-red);">38</div>
+        <div class="card-footer">日本輕井澤+東京</div>
     </div>
 
-    <div class="block">
-        <div class="label">Est. FTP</div>
-        <div class="value">215<span style="font-size: 1rem">W</span></div>
-        <div class="sub-value">Based on last session</div>
+    <div class="card block-large">
+        <div class="card-label">Recovery Monitor</div>
+        <div style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+            <div style="flex: 1;">
+                <span class="value" style="font-size: 2.2rem; font-family: 'Orbitron';">55</span>
+                <span class="card-unit">Score</span>
+            </div>
+            <div style="flex: 2; font-size: 0.8rem; color: #888;">
+                系統建議：<br>
+                <span style="color: var(--f1-red);">⚡ 建議減少 20% 訓練強度</span>
+            </div>
+        </div>
+        <div class="progress-box"><div class="progress-bar" style="width: 55%; background: var(--f1-red); box-shadow: 0 0 10px var(--f1-red);"></div></div>
     </div>
+
 </div>
 
 </body>
