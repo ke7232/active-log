@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Training Feed</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#111827;
+      --panel2:#0f172a;
+      --fg:#e5e7eb;
+      --muted:#94a3b8;
+      --border: rgba(148,163,184,.18);
+      --shadow: 0 18px 55px rgba(0,0,0,.45);
+      --shadow2: 0 4px 18px rgba(0,0,0,.35);
+      --radius:16px;
+      --pad:16px;
+      --max: 1120px;
+      --accent:#fc4c02;       /* Strava 橘 */
+      --accent2:#ff6a2b;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(900px 500px at 15% 0%, rgba(252,76,2,.18), rgba(252,76,2,0) 60%),
+        radial-gradient(800px 480px at 85% 10%, rgba(59,130,246,.16), rgba(59,130,246,0) 60%),
+        linear-gradient(180deg, #070a0f 0%, var(--bg) 28%, #070a0f 100%);
+      color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+                   "PingFang TC","Noto Sans TC","Microsoft JhengHei", Arial, sans-serif;
+      line-height:1.45;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:22px 16px 54px;}
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding: 14px 14px;
+      border:1px solid var(--border);
+      background: rgba(17,24,39,.55);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      box-shadow: var(--shadow2);
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:40px; height:40px; border-radius:14px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), rgba(255,255,255,0) 55%),
+        linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, #ff8a56 100%);
+      box-shadow: 0 12px 35px rgba(252,76,2,.25);
+    }
+    h1{margin:0; font-size:18px; letter-spacing:.2px}
+    .sub{margin:4px 0 0; color:var(--muted); font-size:12px}
+    .right{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--border);
+      background: rgba(15,23,42,.6);
+      border-radius:999px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .dot{width:8px; height:8px; border-radius:999px; background: var(--good)}
+    .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(15,23,42,.55);
+      color:var(--fg);
+      padding:9px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .btn:hover{background: rgba(15,23,42,.8)}
+    .btn.primary{
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%);
+      border-color: rgba(252,76,2,.35);
+      box-shadow: 0 14px 38px rgba(252,76,2,.18);
+      font-weight:800;
+    }
+    .btn.primary:hover{filter: brightness(1.02)}
+    .layout{
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    .card{
+      border:1px solid var(--border);
+      background: rgba(17,24,39,.55);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+    }
+    .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(148,163,184,.14);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .hd h2{margin:0; font-size:13px; letter-spacing:.2px}
+    .bd{padding:16px}
+    .kpiGrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    .kpi{
+      border:1px solid rgba(148,163,184,.14);
+      background: rgba(15,23,42,.55);
+      border-radius:14px;
+      padding:14px;
+    }
+    .kpi .label{margin:0 0 8px; color:var(--muted); font-size:12px}
+    .kpi .value{margin:0; font-size:22px; font-weight:900}
+    .kpi .unit{font-size:12px; color:var(--muted); font-weight:800}
+    .bar{
+      height:8px;
+      background: rgba(148,163,184,.12);
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .bar > i{
+      display:block; height:100%;
+      width: 60%;
+      background: linear-gradient(90deg, var(--accent), #ff8a56);
+      border-radius:999px;
+    }
+    .mini{
+      margin-top:10px;
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.14);
+      background: rgba(15,23,42,.55);
+      color: var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+    .chip b{color:var(--fg)}
+    .today{
+      border:1px dashed rgba(252,76,2,.35);
+      background: rgba(252,76,2,.08);
+      border-radius:16px;
+      padding:14px;
+      margin-top:12px;
+    }
+    .today .name{margin:0; font-weight:900}
+    .today .desc{margin:6px 0 0; color:var(--muted); font-size:12px}
+
+    /* Feed */
+    .feed{display:grid; gap:12px}
+    .activity{
+      display:grid;
+      grid-template-columns: 64px 1fr;
+      gap:12px;
+      padding:14px;
+      border:1px solid rgba(148,163,184,.14);
+      background: rgba(15,23,42,.55);
+      border-radius:16px;
+    }
+    .icon{
+      width:48px; height:48px; border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-weight:900;
+      color: var(--fg);
+    }
+    .activity h3{margin:0; font-size:14px}
+    .metaLine{margin:6px 0 0; color:var(--muted); font-size:12px}
+    .stats{
+      margin-top:10px;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .stat{
+      padding:7px 10px;
+      border-radius:12px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color: var(--fg);
+      font-size:12px;
+      font-weight:800;
+    }
+    .rpe{
+      color: var(--muted);
+      font-weight:800;
+    }
+    .rpe b{color: var(--fg)}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.14);
+      background: rgba(15,23,42,.55);
+      color: var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+    .tag i{
+      width:8px; height:8px; border-radius:999px; display:inline-block;
+      background: var(--good);
+    }
+    footer{
+      margin-top:14px;
+      color: var(--muted);
+      font-size:12px;
+      text-align:center;
+      opacity:.9;
+    }
+    @media (max-width: 980px){
+      .layout{grid-template-columns: 1fr}
+      .right{justify-content:flex-start}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Training Feed</h1>
+          <div class="sub">Strava 風格：Summary + 活動動態</div>
+        </div>
+      </div>
+      <div class="right">
+        <span class="pill"><span class="dot"></span> Last sync: <span id="lastSync">—</span></span>
+        <a class="btn" href="log.html">所有紀錄</a>
+        <a class="btn primary" href="add.html">+ 新增紀錄</a>
+      </div>
+    </header>
+
+    <section class="layout" aria-label="Dashboard">
+      <!-- Left: Summary -->
+      <div class="card">
+        <div class="hd">
+          <h2>本週 Summary</h2>
+          <span class="tag"><i></i> On track</span>
+        </div>
+
+        <div class="bd">
+          <div class="kpiGrid">
+            <div class="kpi">
+              <p class="label">跑步</p>
+              <p class="value"><span id="runKm">0</span> <span class="unit">km</span></p>
+              <div class="bar"><i id="barRun"></i></div>
+            </div>
+            <div class="kpi">
+              <p class="label">自行車</p>
+              <p class="value"><span id="bikeHr">0</span> <span class="unit">hr</span></p>
+              <div class="bar"><i id="barBike"></i></div>
+            </div>
+            <div class="kpi">
+              <p class="label">游泳</p>
+              <p class="value"><span id="swimM">0</span> <span class="unit">m</span></p>
+              <div class="bar"><i id="barSwim"></i></div>
+            </div>
+            <div class="kpi">
+              <p class="label">總時間</p>
+              <p class="value"><span id="totalHr">0</span> <span class="unit">hr</span></p>
+              <div class="bar"><i id="barTotal"></i></div>
+            </div>
+          </div>
+
+          <div class="mini">
+            <span class="chip">目標跑量：<b id="goalRun">35</b> km</span>
+            <span class="chip">目標騎乘：<b id="goalBike">4.5</b> hr</span>
+            <span class="chip">目標游泳：<b id="goalSwim">3000</b> m</span>
+          </div>
+
+          <div class="today">
+            <p class="name" id="todayName">—</p>
+            <p class="desc" id="todayDesc">—</p>
+            <div class="mini" style="margin-top:10px">
+              <button class="btn" id="markDone">標記完成</button>
+              <button class="btn" id="exportJson">匯出 JSON</button>
+            </div>
+          </div>
+        </div>
+
+        <footer style="padding:0 16px 16px; text-align:left">
+          提醒：先把「新增紀錄 → 顯示 Feed」做起來，之後再接資料源。
+        </footer>
+      </div>
+
+      <!-- Right: Feed -->
+      <div class="card">
+        <div class="hd">
+          <h2>Recent Activities</h2>
+          <span class="pill">Last 7 days</span>
+        </div>
+
+        <div class="bd">
+          <div class="feed" id="feed"></div>
+        </div>
+
+        <footer>
+          © <span id="year"></span> Training Feed
+        </footer>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ====== 假資料 ======
+    const data = {
+      lastSync: new Date().toISOString().slice(0,10),
+      goals: { runKm: 35, bikeHr: 4.5, swimM: 3000, totalHr: 9.0 },
+      weekly: { runKm: 22, bikeHr: 3.5, swimM: 3200, totalHr: 7.0 },
+      today: {
+        name: "今天：跑步｜間歇 10K",
+        desc: "5×800m @ 3:45/km，組間休 2'；含熱身收操"
+      },
+      activities: [
+        { date:"2026-01-22", type:"Run",  title:"Interval Run",  dist:"11 km", time:"55:10", elev:"+85 m",  rpe:8, note:"5×800m interval" },
+        { date:"2026-01-21", type:"Swim", title:"Pool Workout",  dist:"1800 m", time:"45:00", elev:"—",     rpe:6, note:"Drills + steady" },
+        { date:"2026-01-20", type:"Bike", title:"Trainer Tempo", dist:"75 min", time:"75:00", elev:"—",     rpe:7, note:"Tempo blocks" },
+        { date:"2026-01-19", type:"Run",  title:"Easy Run",      dist:"5 km",  time:"33:20", elev:"+30 m",  rpe:5, note:"Keep Z2" },
+        { date:"2026-01-18", type:"Bike", title:"Z2 Endurance",  dist:"60 min", time:"60:00", elev:"—",     rpe:6, note:"Cadence focus" },
+        { date:"2026-01-17", type:"Swim", title:"Mixed Drills",  dist:"1400 m", time:"40:00", elev:"—",     rpe:7, note:"Technique + intervals" },
+      ]
+    };
+
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
+    $("lastSync").textContent = data.lastSync;
+
+    // goals
+    $("goalRun").textContent = data.goals.runKm;
+    $("goalBike").textContent = data.goals.bikeHr;
+    $("goalSwim").textContent = data.goals.swimM;
+
+    // weekly
+    $("runKm").textContent = data.weekly.runKm;
+    $("bikeHr").textContent = data.weekly.bikeHr;
+    $("swimM").textContent = data.weekly.swimM.toLocaleString();
+    $("totalHr").textContent = data.weekly.totalHr;
+
+    // progress bars
+    function pct(v, g){
+      if (!g || g <= 0) return 0;
+      return Math.max(0, Math.min(100, Math.round((v / g) * 100)));
+    }
+    const pRun  = pct(data.weekly.runKm,  data.goals.runKm);
+    const pBike = pct(data.weekly.bikeHr, data.goals.bikeHr);
+    const pSwim = pct(data.weekly.swimM,  data.goals.swimM);
+    const pTot  = pct(data.weekly.totalHr,data.goals.totalHr);
+
+    $("barRun").style.width   = pRun  + "%";
+    $("barBike").style.width  = pBike + "%";
+    $("barSwim").style.width  = pSwim + "%";
+    $("barTotal").style.width = pTot  + "%";
+
+    // today
+    $("todayName").textContent = data.today.name;
+    $("todayDesc").textContent = data.today.desc;
+
+    // feed
+    function iconFor(type){
+      // 不用 SVG，純字母極簡
+      if (type === "Run") return "R";
+      if (type === "Bike") return "B";
+      if (type === "Swim") return "S";
+      return "•";
+    }
+    const feed = $("feed");
+    feed.innerHTML = data.activities.map(a => `
+      <div class="activity">
+        <div class="icon" aria-hidden="true" style="${a.type==='Run'?'outline: 1px solid rgba(252,76,2,.25)': ''}">
+          ${iconFor(a.type)}
+        </div>
+        <div>
+          <h3>${a.title} <span class="rpe">· RPE <b>${a.rpe}</b></span></h3>
+          <div class="metaLine">${a.date} · <span style="color:var(--muted)">${a.type}</span> · ${a.note}</div>
+          <div class="stats">
+            <span class="stat">${a.dist}</span>
+            <span class="stat">${a.time}</span>
+            <span class="stat">${a.elev}</span>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    // done state
+    const DONE_KEY = "training_feed_today_done";
+    function refreshDone(){
+      const done = localStorage.getItem(DONE_KEY) === "1";
+      $("markDone").textContent = done ? "已完成 ✅" : "標記完成";
+      $("markDone").style.opacity = done ? "0.75" : "1";
+    }
+    $("markDone").addEventListener("click", () => {
+      const done = localStorage.getItem(DONE_KEY) === "1";
+      localStorage.setItem(DONE_KEY, done ? "0" : "1");
+      refreshDone();
+    });
+    refreshDone();
+
+    // export json
+    $("exportJson").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "training-feed-sample.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
