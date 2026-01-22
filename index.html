@@ -1,312 +1,198 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Training Log</title>
-  <style>
-    :root{
-      --bg:#ffffff;
-      --fg:#111111;
-      --muted:#666666;
-      --border:#e6e6e6;
-      --card:#fafafa;
-      --shadow: 0 1px 0 rgba(0,0,0,.04);
-      --radius:12px;
-      --pad:16px;
-      --max: 980px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--fg);
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-                   "PingFang TC","Noto Sans TC","Microsoft JhengHei", Arial, sans-serif;
-      line-height:1.4;
-    }
-    a{color:inherit; text-decoration:none}
-    .wrap{max-width:var(--max); margin:0 auto; padding: 20px 16px 40px;}
-    header{
-      display:flex; align-items:flex-end; justify-content:space-between;
-      gap:12px; padding: 6px 0 18px; border-bottom:1px solid var(--border);
-      position:sticky; top:0; background:rgba(255,255,255,.92); backdrop-filter: blur(6px);
-      z-index:10;
-    }
-    .title h1{margin:0; font-size:20px; letter-spacing:.2px}
-    .title p{margin:6px 0 0; color:var(--muted); font-size:12px}
-    .meta{color:var(--muted); font-size:12px; text-align:right}
-    .row{display:grid; gap:12px; margin-top:16px}
-    .kpis{grid-template-columns: repeat(4, minmax(0,1fr))}
-    .two{grid-template-columns: 2fr 1fr}
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:var(--pad);
-      box-shadow:var(--shadow);
-    }
-    .kpi-label{color:var(--muted); font-size:12px; margin:0 0 8px}
-    .kpi-value{font-size:24px; font-weight:700; margin:0}
-    .kpi-sub{color:var(--muted); font-size:12px; margin:8px 0 0}
-    .section-title{
-      display:flex; align-items:center; justify-content:space-between;
-      margin: 0 0 10px;
-    }
-    .section-title h2{margin:0; font-size:14px; letter-spacing:.2px}
-    .btns{display:flex; gap:8px; flex-wrap:wrap}
-    button, .btn{
-      border:1px solid var(--border);
-      background:#fff;
-      color:var(--fg);
-      padding:10px 12px;
-      border-radius:10px;
-      cursor:pointer;
-      font-size:13px;
-    }
-    button:hover, .btn:hover{background:#f3f3f3}
-    .btn.primary{background:#111; color:#fff; border-color:#111}
-    .btn.primary:hover{opacity:.92}
-    .today{
-      display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
-    }
-    .today .info{min-width:0}
-    .today .name{font-weight:700; margin:0 0 6px}
-    .today .desc{margin:0; color:var(--muted); font-size:13px}
-    .quick{
-      display:grid; grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:10px;
-    }
-    .quick a{
-      display:block; padding:12px; border-radius:12px;
-      border:1px solid var(--border); background:#fff;
-    }
-    .quick a .t{font-weight:700; font-size:13px; margin:0 0 6px}
-    .quick a .s{color:var(--muted); font-size:12px; margin:0}
-    .quick a:hover{background:#f3f3f3}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ActiveLog | 賽車級運動儀表</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Noto+Sans+TC:wght@500;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --petronas: #00A19B;
+            --bg: #050505;
+            --panel: #0f0f0f;
+            --accent: #1a1a1a;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
 
-    table{width:100%; border-collapse:collapse; font-size:13px}
-    th,td{padding:10px 8px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top}
-    th{color:var(--muted); font-weight:600; font-size:12px}
-    .tag{
-      display:inline-block; padding:2px 8px; border:1px solid var(--border);
-      border-radius:999px; font-size:12px; color:var(--muted); background:#fff;
-    }
-    footer{margin-top:18px; color:var(--muted); font-size:12px}
-    .note{color:var(--muted); font-size:12px; margin-top:8px}
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-    @media (max-width: 900px){
-      .kpis{grid-template-columns: repeat(2, minmax(0,1fr))}
-      .two{grid-template-columns: 1fr}
-      .quick{grid-template-columns: repeat(2, minmax(0,1fr))}
-      .meta{text-align:left}
-      header{position:static; backdrop-filter:none; background:#fff}
-    }
-  </style>
+        /* 標題區：強化金屬感 */
+        header {
+            background: linear-gradient(180deg, #151515 0%, #000 100%);
+            padding: 20px;
+            border: 1px solid var(--accent);
+            border-bottom: 4px solid var(--petronas);
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--petronas);
+        }
+
+        /* 方塊容器 */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        /* 數據方塊樣式 */
+        .block {
+            background: var(--panel);
+            border: 2px solid var(--accent);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        .block::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: var(--petronas);
+        }
+
+        .label {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--petronas);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            margin: 10px 0;
+            display: block;
+        }
+
+        .sub-value {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* 強力按鈕樣式 */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .f1-btn-block {
+            background: var(--accent);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .f1-btn-block:active {
+            background: var(--petronas);
+            color: #000;
+            box-shadow: 0 0 20px var(--petronas);
+        }
+
+        /* 特殊狀態色 */
+        .warning { border-left-color: #ffde00 !important; }
+        .danger { border-left-color: #ff0000 !important; }
+
+        /* 進度條 */
+        .progress-track {
+            background: #000;
+            height: 6px;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            background: var(--petronas);
+            height: 100%;
+            box-shadow: 0 0 10px var(--petronas);
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 30px; max-width: 1200px; margin: auto; }
+            .grid-layout { grid-template-columns: repeat(3, 1fr); }
+            .nav-grid { grid-template-columns: repeat(5, 1fr); }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <header>
-      <div class="title">
-        <h1>Training Log</h1>
-        <p>簡單、可擴充的訓練儀表板（跑 / 騎 / 游）</p>
-      </div>
-      <div class="meta">
-        <div><span class="tag">Last sync</span> <span id="lastSync">—</span></div>
-        <div class="note">資料先用假資料示範</div>
-      </div>
-    </header>
 
-    <!-- KPIs -->
-    <section class="row kpis" aria-label="Weekly KPIs">
-      <div class="card">
-        <p class="kpi-label">本週跑量</p>
-        <p class="kpi-value"><span id="kpiRun">0</span> <span style="font-size:14px;font-weight:600;color:var(--muted)">km</span></p>
-        <p class="kpi-sub">含輕鬆跑 / 間歇 / 長跑</p>
-      </div>
-      <div class="card">
-        <p class="kpi-label">本週騎乘</p>
-        <p class="kpi-value"><span id="kpiBikeH">0</span> <span style="font-size:14px;font-weight:600;color:var(--muted)">hr</span></p>
-        <p class="kpi-sub">訓練台 / 戶外</p>
-      </div>
-      <div class="card">
-        <p class="kpi-label">本週游泳</p>
-        <p class="kpi-value"><span id="kpiSwim">0</span> <span style="font-size:14px;font-weight:600;color:var(--muted)">m</span></p>
-        <p class="kpi-sub">技術 / 間歇 / 耐力</p>
-      </div>
-      <div class="card">
-        <p class="kpi-label">本週總訓練時間</p>
-        <p class="kpi-value"><span id="kpiTotal">0</span> <span style="font-size:14px;font-weight:600;color:var(--muted)">hr</span></p>
-        <p class="kpi-sub">含熱身與收操</p>
-      </div>
-    </section>
+<header>
+    <h1>ACTIVE_LOG // v1.4</h1>
+</header>
 
-    <!-- Today + Quick Links -->
-    <section class="row two" aria-label="Today and Quick Links">
-      <div class="card">
-        <div class="section-title">
-          <h2>Today</h2>
-          <div class="btns">
-            <a class="btn primary" href="add.html">+ 新增紀錄</a>
-            <button id="markDone">標記完成</button>
-          </div>
-        </div>
-        <div class="today">
-          <div class="info">
-            <p class="name" id="todayName">—</p>
-            <p class="desc" id="todayDesc">—</p>
-            <p class="note" id="todayNote"></p>
-          </div>
-        </div>
-      </div>
+<div class="nav-grid">
+    <div class="f1-btn-block">Status</div>
+    <div class="f1-btn-block">Zones</div>
+    <div class="f1-btn-block" style="border-color: var(--petronas);">TSS</div>
+    <div class="f1-btn-block">History</div>
+    <div class="f1-btn-block">Setup</div>
+</div>
 
-      <div class="card">
-        <div class="section-title">
-          <h2>Quick</h2>
-          <div class="btns">
-            <a class="btn" href="log.html">所有紀錄</a>
-            <a class="btn" href="stats.html">統計</a>
-          </div>
-        </div>
+<div class="grid-layout">
+    <div class="block">
+        <div class="label">Marathon Goal Progress</div>
+        <div class="value">75<span style="font-size: 1rem">%</span></div>
+        <div class="sub-value">Target: 4:40:00</div>
+        <div class="progress-track"><div class="progress-fill" style="width: 75%"></div></div>
+    </div>
 
-        <div class="quick">
-          <a href="weekly.html">
-            <p class="t">本週回顧</p>
-            <p class="s">量、重點課表、疲勞</p>
-          </a>
-          <a href="monthly.html">
-            <p class="t">月檢視</p>
-            <p class="s">趨勢與累積</p>
-          </a>
-          <a href="tests.html">
-            <p class="t">測試成績</p>
-            <p class="s">FTP / 配速 / 游速</p>
-          </a>
-          <a href="weight.html">
-            <p class="t">體重 / 體脂</p>
-            <p class="s">趨勢與目標</p>
-          </a>
-          <a href="gear.html">
-            <p class="t">裝備里程</p>
-            <p class="s">跑鞋、卡鞋、胎</p>
-          </a>
-          <a href="plan.html">
-            <p class="t">訓練計畫</p>
-            <p class="s">下週安排</p>
-          </a>
-        </div>
+    <div class="block">
+        <div class="label">Swim Pace / 100m</div>
+        <div class="value">1:42</div>
+        <div class="sub-value">Current Avg</div>
+    </div>
 
-        <p class="note">（上面頁面先做成空白也沒關係，之後慢慢補）</p>
-      </div>
-    </section>
+    <div class="block warning">
+        <div class="label">Weekly TSS</div>
+        <div class="value">450</div>
+        <div class="sub-value">Status: Heavy Load</div>
+    </div>
 
-    <!-- Last 7 days -->
-    <section class="card" style="margin-top:12px" aria-label="Last 7 Days">
-      <div class="section-title">
-        <h2>Last 7 Days</h2>
-        <div class="btns">
-          <button id="exportJson">匯出 JSON</button>
-          <button id="clearDone">清除完成狀態</button>
-        </div>
-      </div>
+    <div class="block danger">
+        <div class="label">Recovery Score</div>
+        <div class="value">55</div>
+        <div class="sub-value">Recommendation: Rest</div>
+    </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th style="width:120px">日期</th>
-            <th style="width:90px">類型</th>
-            <th style="width:140px">距離 / 時間</th>
-            <th style="width:70px">RPE</th>
-            <th>備註</th>
-          </tr>
-        </thead>
-        <tbody id="last7"></tbody>
-      </table>
+    <div class="block">
+        <div class="label">Days to Race</div>
+        <div class="value">38</div>
+        <div class="sub-value">Japan Karuizawa / Tokyo</div>
+    </div>
 
-      <footer>
-        <div>© <span id="year"></span> Training Log</div>
-      </footer>
-    </section>
-  </div>
+    <div class="block">
+        <div class="label">Est. FTP</div>
+        <div class="value">215<span style="font-size: 1rem">W</span></div>
+        <div class="sub-value">Based on last session</div>
+    </div>
+</div>
 
-  <script>
-    // ====== 假資料（之後可改成讀 Google Sheet / JSON） ======
-    const data = {
-      lastSync: new Date().toISOString().slice(0,10),
-      weekly: { runKm: 22, bikeHr: 3.5, swimM: 3200, totalHr: 7.0 },
-      today: {
-        name: "跑步｜間歇 10K",
-        desc: "5×800m @ 3:45/km，組間休 2'；含熱身收操",
-        note: "提醒：今天如果腿很緊，改成 Z2 輕鬆跑也可以。"
-      },
-      last7: [
-        { date:"2026-01-22", type:"Run",  vol:"11 km",      rpe:8, note:"5×800m interval" },
-        { date:"2026-01-21", type:"Swim", vol:"1800 m",     rpe:6, note:"Pool workout" },
-        { date:"2026-01-20", type:"Bike", vol:"75 min",     rpe:7, note:"Trainer tempo" },
-        { date:"2026-01-19", type:"Run",  vol:"5 km",       rpe:5, note:"Easy run" },
-        { date:"2026-01-18", type:"Bike", vol:"60 min",     rpe:6, note:"Z2 endurance" },
-        { date:"2026-01-17", type:"Swim", vol:"1400 m",     rpe:7, note:"Mixed drills" },
-        { date:"2026-01-16", type:"Rest", vol:"—",          rpe:"—", note:"Rest day" }
-      ]
-    };
-
-    // ====== Render ======
-    const $ = (id) => document.getElementById(id);
-    $("year").textContent = new Date().getFullYear();
-
-    $("lastSync").textContent = data.lastSync;
-
-    $("kpiRun").textContent = data.weekly.runKm;
-    $("kpiBikeH").textContent = data.weekly.bikeHr;
-    $("kpiSwim").textContent = data.weekly.swimM.toLocaleString();
-    $("kpiTotal").textContent = data.weekly.totalHr;
-
-    $("todayName").textContent = data.today.name;
-    $("todayDesc").textContent = data.today.desc;
-    $("todayNote").textContent = data.today.note || "";
-
-    const tbody = $("last7");
-    tbody.innerHTML = data.last7.map(r => `
-      <tr>
-        <td>${r.date}</td>
-        <td><span class="tag">${r.type}</span></td>
-        <td>${r.vol}</td>
-        <td>${r.rpe}</td>
-        <td>${r.note}</td>
-      </tr>
-    `).join("");
-
-    // ====== Simple local "done" state ======
-    const DONE_KEY = "traininglog_today_done";
-    function refreshDone(){
-      const done = localStorage.getItem(DONE_KEY) === "1";
-      $("markDone").textContent = done ? "已完成 ✅" : "標記完成";
-      $("markDone").style.opacity = done ? "0.7" : "1";
-    }
-    $("markDone").addEventListener("click", () => {
-      const done = localStorage.getItem(DONE_KEY) === "1";
-      localStorage.setItem(DONE_KEY, done ? "0" : "1");
-      refreshDone();
-    });
-    $("clearDone").addEventListener("click", () => {
-      localStorage.removeItem(DONE_KEY);
-      refreshDone();
-    });
-    refreshDone();
-
-    // ====== Export JSON ======
-    $("exportJson").addEventListener("click", () => {
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "traininglog-sample.json";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    });
-  </script>
 </body>
 </html>
