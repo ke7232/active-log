@@ -3,29 +3,30 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Training Feed</title>
+  <title>Training Dashboard</title>
   <style>
+    /* =========================
+       THEME (CSS variables)
+       ========================= */
     :root{
-      /* Base (light) */
       --bg:#f6f7fb;
       --card:#ffffff;
-      --fg:#0b1220;          /* 深墨 */
+      --fg:#0b1220;
       --muted:#64748b;
       --border: rgba(15,23,42,.10);
       --shadow: 0 16px 40px rgba(2,6,23,.08);
       --shadow2: 0 6px 20px rgba(2,6,23,.08);
       --radius:16px;
-      --max: 1120px;
+      --max: 1180px;
 
-      /* ===== Power Theme: Volt / Neon ===== */
-      --accent:#B7FF00;      /* Volt green */
-      --accent2:#7C3AED;     /* Electric purple */
-      --accent3:#FF2D95;     /* Hot pink (tiny use) */
-      --blue:#2563eb;        /* fallback */
-      --chip:#f1f5f9;
+      /* default theme (will be replaced by JS) */
+      --accent:#B7FF00;   /* primary */
+      --accent2:#7C3AED;  /* secondary */
+      --accent3:#00D4FF;  /* third */
+      --led:#B7FF00;      /* LED digit glow */
       --ink:#0f172a;
 
-      /* Activity colors */
+      /* activity stripes */
       --run:#B7FF00;
       --bike:#7C3AED;
       --swim:#00D4FF;
@@ -33,6 +34,9 @@
       --good:#16a34a;
     }
 
+    /* =========================
+       BASE
+       ========================= */
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -41,38 +45,37 @@
                    "PingFang TC","Noto Sans TC","Microsoft JhengHei", Arial, sans-serif;
       line-height:1.45;
       background:
-        radial-gradient(900px 560px at 12% 0%, rgba(183,255,0,.22), rgba(183,255,0,0) 55%),
-        radial-gradient(900px 520px at 88% 5%, rgba(124,58,237,.18), rgba(124,58,237,0) 55%),
-        radial-gradient(760px 480px at 75% 25%, rgba(0,212,255,.14), rgba(0,212,255,0) 55%),
+        radial-gradient(900px 560px at 12% 0%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 55%),
+        radial-gradient(900px 520px at 88% 5%, color-mix(in srgb, var(--accent2) 18%, transparent) 0%, transparent 55%),
+        radial-gradient(760px 480px at 75% 25%, color-mix(in srgb, var(--accent3) 14%, transparent) 0%, transparent 55%),
         linear-gradient(180deg, #ffffff 0%, var(--bg) 40%, #ffffff 100%);
     }
     a{color:inherit; text-decoration:none}
-
-    .wrap{max-width:var(--max); margin:0 auto; padding:22px 16px 54px;}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 54px;}
 
     header{
       display:flex; align-items:center; justify-content:space-between; gap:14px;
       padding: 14px 14px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,.80);
+      background: rgba(255,255,255,.84);
       backdrop-filter: blur(10px);
       border-radius: 18px;
       box-shadow: var(--shadow2);
     }
     .brand{display:flex; align-items:center; gap:12px}
     .logo{
-      width:40px; height:40px; border-radius:14px;
+      width:42px; height:42px; border-radius:14px;
       background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.70), rgba(255,255,255,0) 55%),
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.78), rgba(255,255,255,0) 55%),
         linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, var(--accent3) 100%);
-      box-shadow: 0 14px 36px rgba(124,58,237,.18);
+      box-shadow: 0 14px 36px color-mix(in srgb, var(--accent2) 16%, transparent);
       position:relative; overflow:hidden;
     }
     .logo:after{
       content:"";
       position:absolute; inset:-30px -60px auto auto;
-      width:120px; height:120px;
-      background: radial-gradient(circle at 30% 30%, rgba(0,212,255,.35), rgba(0,212,255,0) 60%);
+      width:140px; height:140px;
+      background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--accent3) 35%, transparent), transparent 60%);
       transform: rotate(14deg);
     }
 
@@ -84,7 +87,7 @@
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 10px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.88);
       border-radius:999px;
       color:var(--muted);
       font-size:12px;
@@ -93,37 +96,71 @@
 
     .btn{
       border:1px solid rgba(15,23,42,.12);
-      background: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.94);
       color:var(--ink);
       padding:9px 12px;
       border-radius:12px;
       cursor:pointer;
       font-size:13px;
       box-shadow: 0 1px 0 rgba(2,6,23,.04);
+      user-select:none;
     }
     .btn:hover{background:#f8fafc}
     .btn.primary{
       color:#0b1220;
-      border-color: rgba(183,255,0,.35);
-      background: linear-gradient(135deg, var(--accent) 0%, #d9ff6a 60%);
-      box-shadow: 0 16px 38px rgba(183,255,0,.18);
+      border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+      background: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 65%, white) 70%);
+      box-shadow: 0 16px 38px color-mix(in srgb, var(--accent) 18%, transparent);
       font-weight:950;
     }
     .btn.primary:hover{filter: brightness(1.02)}
     .btn.ghost{
-      border-color: rgba(124,58,237,.18);
-      background: rgba(124,58,237,.06);
+      border-color: color-mix(in srgb, var(--accent2) 18%, transparent);
+      background: color-mix(in srgb, var(--accent2) 6%, white);
     }
 
+    /* =========================
+       THEME SWITCHER
+       ========================= */
+    .themes{
+      display:flex; gap:8px; flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .themeBtn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background: rgba(255,255,255,.88);
+      cursor:pointer;
+      font-size:12px;
+      color:var(--muted);
+      box-shadow: 0 1px 0 rgba(2,6,23,.04);
+    }
+    .themeBtn:hover{background:#fff}
+    .sw{display:flex; gap:4px}
+    .sw i{
+      width:10px; height:10px; border-radius:99px; display:inline-block;
+      border:1px solid rgba(15,23,42,.10);
+    }
+    .themeBtn.active{
+      border-color: color-mix(in srgb, var(--accent2) 20%, var(--border));
+      color: var(--ink);
+      box-shadow: 0 10px 24px rgba(2,6,23,.08);
+    }
+
+    /* =========================
+       LAYOUT
+       ========================= */
     .layout{
       display:grid;
-      grid-template-columns: 380px 1fr;
+      grid-template-columns: 420px 1fr;
       gap:14px;
       margin-top:14px;
     }
     .card{
       border:1px solid var(--border);
-      background: rgba(255,255,255,.86);
+      background: rgba(255,255,255,.88);
       backdrop-filter: blur(10px);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -137,93 +174,131 @@
     .hd h2{margin:0; font-size:13px; letter-spacing:.2px}
     .bd{padding:16px}
 
-    /* Gradient number (KPI) */
-    .gradText{
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, var(--accent3) 100%);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
+    /* =========================
+       ELECTRONIC DASH (LED)
+       ========================= */
+    .dashTop{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      margin-bottom:12px;
+    }
+    .dashLabel{
+      color:var(--muted);
+      font-size:12px;
+      margin:0;
+    }
+    .dashHint{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:12px;
     }
 
-    /* Summary */
-    .kpiGrid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:12px;
-    }
-    .kpi{
+    /* LED panel background */
+    .ledPanel{
       border:1px solid rgba(15,23,42,.10);
-      background: linear-gradient(180deg, #ffffff, #f8fafc);
-      border-radius:14px;
+      border-radius: 16px;
+      background:
+        radial-gradient(700px 180px at 10% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
+        radial-gradient(700px 180px at 90% 0%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 55%),
+        linear-gradient(180deg, #0b1220 0%, #0a1020 100%);
+      color:#e5e7eb;
       padding:14px;
+      box-shadow: 0 18px 42px rgba(2,6,23,.18);
+    }
+
+    .ledRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .ledBox{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      background: rgba(255,255,255,.04);
+      padding:12px;
       position:relative;
       overflow:hidden;
     }
-    .kpi:after{
+    .ledBox:before{
       content:"";
-      position:absolute; inset:auto -40px -50px auto;
-      width:140px; height:140px;
-      background: radial-gradient(circle at 30% 30%, rgba(124,58,237,.16), rgba(124,58,237,0) 60%);
-      transform: rotate(12deg);
+      position:absolute; left:-40px; top:-40px;
+      width:120px; height:120px;
+      background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--led) 26%, transparent), transparent 60%);
+      transform: rotate(18deg);
       pointer-events:none;
+      filter: blur(0px);
     }
-    .kpi .label{margin:0 0 8px; color:var(--muted); font-size:12px}
-    .kpi .value{margin:0; font-size:22px; font-weight:950; letter-spacing:.2px}
-    .kpi .unit{font-size:12px; color:var(--muted); font-weight:900}
+    .ledCap{
+      display:flex; align-items:center; justify-content:space-between;
+      color: rgba(229,231,235,.70);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.4px;
+      text-transform: uppercase;
+      margin-bottom:10px;
+    }
+    .ledUnit{opacity:.75}
 
-    .bar{
+    /* LED dot-matrix effect */
+    .ledNum{
+      font-weight:950;
+      font-size:34px;
+      letter-spacing:2px;
+      line-height:1;
+      color: color-mix(in srgb, var(--led) 88%, white);
+      text-shadow:
+        0 0 12px color-mix(in srgb, var(--led) 35%, transparent),
+        0 0 26px color-mix(in srgb, var(--led) 22%, transparent);
+      /* dot matrix illusion */
+      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,.95) 42%, rgba(0,0,0,0) 44%);
+      mask-image: radial-gradient(circle, rgba(0,0,0,.95) 42%, rgba(0,0,0,0) 44%);
+      -webkit-mask-size: 6px 6px;
+      mask-size: 6px 6px;
+      -webkit-mask-repeat: repeat;
+      mask-repeat: repeat;
+    }
+    .ledNum small{
+      font-size:14px;
+      letter-spacing:1px;
+      opacity:.78;
+      margin-left:6px;
+    }
+
+    .progressLine{
       height:8px;
-      background: rgba(15,23,42,.08);
+      background: rgba(255,255,255,.10);
       border-radius:999px;
       overflow:hidden;
       margin-top:10px;
     }
-    .bar > i{
+    .progressLine > i{
       display:block; height:100%;
       width: 60%;
-      background: linear-gradient(90deg, var(--accent), #d9ff6a);
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
       border-radius:999px;
     }
-    .bar.purple > i{
-      background: linear-gradient(90deg, var(--accent2), #a78bfa);
-    }
-    .bar.cyan > i{
-      background: linear-gradient(90deg, #00D4FF, #7dd3fc);
-    }
+    .progressLine.bike > i{background: linear-gradient(90deg, var(--accent2), color-mix(in srgb, var(--accent2) 55%, white))}
+    .progressLine.swim > i{background: linear-gradient(90deg, var(--accent3), color-mix(in srgb, var(--accent3) 60%, white))}
+    .progressLine.total > i{background: linear-gradient(90deg, var(--accent), var(--accent2))}
 
-    .mini{
-      margin-top:10px;
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:7px 10px;
-      border-radius:999px;
-      border:1px solid rgba(15,23,42,.10);
-      background: var(--chip);
-      color: var(--muted);
-      font-size:12px;
-      font-weight:950;
-    }
-    .chip b{color:var(--ink)}
-    .chip .mark{
-      width:8px; height:8px; border-radius:99px; display:inline-block;
-      background: var(--accent);
-    }
-    .chip.purple .mark{background: var(--accent2)}
-    .chip.cyan .mark{background: #00D4FF}
-
+    /* Today block */
     .today{
-      border:1px dashed rgba(124,58,237,.35);
-      background: linear-gradient(180deg, rgba(124,58,237,.10), rgba(124,58,237,.05));
+      margin-top:12px;
+      border:1px dashed rgba(15,23,42,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(248,250,252,.85));
       border-radius:16px;
       padding:14px;
-      margin-top:12px;
     }
     .today .name{margin:0; font-weight:950}
     .today .desc{margin:6px 0 0; color:var(--muted); font-size:12px}
+    .mini{
+      margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;
+    }
 
-    /* Feed */
+    /* =========================
+       FEED + STRIPES
+       ========================= */
     .feed{display:grid; gap:12px}
     .activity{
       position:relative;
@@ -237,19 +312,17 @@
       box-shadow: 0 1px 0 rgba(2,6,23,.04);
       overflow:hidden;
     }
-
-    /* Left energy stripe */
     .activity::before{
       content:"";
       position:absolute; left:0; top:0; bottom:0;
       width:6px;
-      background: linear-gradient(180deg, var(--accent), rgba(183,255,0,.5));
+      background: linear-gradient(180deg, var(--run), color-mix(in srgb, var(--run) 45%, transparent));
     }
     .activity.bike::before{
-      background: linear-gradient(180deg, var(--accent2), rgba(124,58,237,.45));
+      background: linear-gradient(180deg, var(--bike), color-mix(in srgb, var(--bike) 45%, transparent));
     }
     .activity.swim::before{
-      background: linear-gradient(180deg, #00D4FF, rgba(0,212,255,.35));
+      background: linear-gradient(180deg, var(--swim), color-mix(in srgb, var(--swim) 45%, transparent));
     }
 
     .icon{
@@ -259,21 +332,10 @@
       border:1px solid rgba(15,23,42,.10);
       font-weight:950;
       color: var(--ink);
-      position:relative;
-      overflow:hidden;
     }
-    .icon.run{
-      border-color: rgba(183,255,0,.45);
-      box-shadow: 0 12px 24px rgba(183,255,0,.14);
-    }
-    .icon.bike{
-      border-color: rgba(124,58,237,.30);
-      box-shadow: 0 12px 24px rgba(124,58,237,.12);
-    }
-    .icon.swim{
-      border-color: rgba(0,212,255,.30);
-      box-shadow: 0 12px 24px rgba(0,212,255,.10);
-    }
+    .icon.run{border-color: color-mix(in srgb, var(--run) 30%, rgba(15,23,42,.10))}
+    .icon.bike{border-color: color-mix(in srgb, var(--bike) 26%, rgba(15,23,42,.10))}
+    .icon.swim{border-color: color-mix(in srgb, var(--swim) 26%, rgba(15,23,42,.10))}
 
     .activity h3{margin:0; font-size:14px}
     .metaLine{margin:6px 0 0; color:var(--muted); font-size:12px}
@@ -293,21 +355,6 @@
     .rpe{color: var(--muted); font-weight:950;}
     .rpe b{color: var(--ink)}
 
-    .tag{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:7px 10px;
-      border-radius:999px;
-      border:1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.85);
-      color: var(--muted);
-      font-size:12px;
-      font-weight:950;
-    }
-    .tag i{
-      width:8px; height:8px; border-radius:999px; display:inline-block;
-      background: var(--good);
-    }
-
     footer{
       margin-top:14px;
       color: var(--muted);
@@ -316,9 +363,10 @@
       opacity:.9;
     }
 
-    @media (max-width: 980px){
+    @media (max-width: 1020px){
       .layout{grid-template-columns: 1fr}
       .right{justify-content:flex-start}
+      .themes{justify-content:flex-start}
     }
   </style>
 </head>
@@ -329,10 +377,11 @@
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
         <div>
-          <h1>Training Feed</h1>
-          <div class="sub">Volt / Neon · 白底 Power（左側能量色條 + KPI 漸層字）</div>
+          <h1>Training Dashboard</h1>
+          <div class="sub">電子賽車儀表風 · LED 點陣數字 + Feed</div>
         </div>
       </div>
+
       <div class="right">
         <span class="pill"><span class="dot"></span> Last sync: <span id="lastSync">—</span></span>
         <a class="btn ghost" href="log.html">所有紀錄</a>
@@ -340,51 +389,57 @@
       </div>
     </header>
 
+    <div class="themes" style="margin-top:10px" id="themes"></div>
+
     <section class="layout" aria-label="Dashboard">
-      <!-- Left: Summary -->
+      <!-- Left: Electronic Dash -->
       <div class="card">
         <div class="hd">
-          <h2>本週 Summary</h2>
-          <span class="tag"><i></i> On track</span>
+          <h2>本週儀表板</h2>
+          <span class="pill">Power theme</span>
         </div>
 
         <div class="bd">
-          <div class="kpiGrid">
-            <div class="kpi">
-              <p class="label">跑步</p>
-              <p class="value"><span id="runKm" class="gradText">0</span> <span class="unit">km</span></p>
-              <div class="bar"><i id="barRun"></i></div>
+          <div class="dashTop">
+            <div>
+              <p class="dashLabel">Weekly Metrics（跑 / 騎 / 游）</p>
+              <p class="dashHint">LED 面板是視覺效果；資料目前先用假資料示範。</p>
             </div>
-
-            <div class="kpi">
-              <p class="label">自行車</p>
-              <p class="value"><span id="bikeHr" class="gradText">0</span> <span class="unit">hr</span></p>
-              <div class="bar purple"><i id="barBike"></i></div>
-            </div>
-
-            <div class="kpi">
-              <p class="label">游泳</p>
-              <p class="value"><span id="swimM" class="gradText">0</span> <span class="unit">m</span></p>
-              <div class="bar cyan"><i id="barSwim"></i></div>
-            </div>
-
-            <div class="kpi">
-              <p class="label">總時間</p>
-              <p class="value"><span id="totalHr" class="gradText">0</span> <span class="unit">hr</span></p>
-              <div class="bar"><i id="barTotal"></i></div>
-            </div>
+            <div class="pill">Week: <b id="weekTag" style="color:var(--ink)">WIP</b></div>
           </div>
 
-          <div class="mini">
-            <span class="chip"><span class="mark"></span> 目標跑量：<b id="goalRun">35</b> km</span>
-            <span class="chip purple"><span class="mark"></span> 目標騎乘：<b id="goalBike">4.5</b> hr</span>
-            <span class="chip cyan"><span class="mark"></span> 目標游泳：<b id="goalSwim">3000</b> m</span>
+          <div class="ledPanel">
+            <div class="ledRow">
+              <div class="ledBox">
+                <div class="ledCap"><span>RUN</span><span class="ledUnit">km</span></div>
+                <div class="ledNum" id="runKm">0<small>km</small></div>
+                <div class="progressLine"><i id="barRun"></i></div>
+              </div>
+
+              <div class="ledBox">
+                <div class="ledCap"><span>BIKE</span><span class="ledUnit">hr</span></div>
+                <div class="ledNum" id="bikeHr">0<small>hr</small></div>
+                <div class="progressLine bike"><i id="barBike"></i></div>
+              </div>
+
+              <div class="ledBox">
+                <div class="ledCap"><span>SWIM</span><span class="ledUnit">m</span></div>
+                <div class="ledNum" id="swimM">0<small>m</small></div>
+                <div class="progressLine swim"><i id="barSwim"></i></div>
+              </div>
+
+              <div class="ledBox">
+                <div class="ledCap"><span>TOTAL</span><span class="ledUnit">hr</span></div>
+                <div class="ledNum" id="totalHr">0<small>hr</small></div>
+                <div class="progressLine total"><i id="barTotal"></i></div>
+              </div>
+            </div>
           </div>
 
           <div class="today">
             <p class="name" id="todayName">—</p>
             <p class="desc" id="todayDesc">—</p>
-            <div class="mini" style="margin-top:10px">
+            <div class="mini">
               <button class="btn" id="markDone">標記完成</button>
               <button class="btn" id="exportJson">匯出 JSON</button>
             </div>
@@ -392,7 +447,7 @@
         </div>
 
         <footer style="padding:0 16px 16px; text-align:left">
-          這套配色比較「夜跑/賽車感」，白底依然很有 power。
+          想要更像「賽車 HUD」：下一步可以把 Feed 的 R/B/S icon 換成更像儀表的圖示，或加上速度感分隔線。
         </footer>
       </div>
 
@@ -408,14 +463,118 @@
         </div>
 
         <footer>
-          © <span id="year"></span> Training Feed
+          © <span id="year"></span> Training Dashboard
         </footer>
       </div>
     </section>
   </div>
 
   <script>
-    // ====== 假資料 ======
+    // =========================
+    // THEMES (5 presets)
+    // =========================
+    const THEMES = [
+      {
+        id: "volt",
+        name: "Volt/Neon",
+        accent: "#B7FF00",
+        accent2:"#7C3AED",
+        accent3:"#00D4FF",
+        led:"#B7FF00",
+        run:"#B7FF00",
+        bike:"#7C3AED",
+        swim:"#00D4FF"
+      },
+      {
+        id: "lava",
+        name: "Lava/Cyan",
+        accent: "#FF3D00",
+        accent2:"#111827",
+        accent3:"#00D4FF",
+        led:"#FF3D00",
+        run:"#FF3D00",
+        bike:"#00D4FF",
+        swim:"#0EA5E9"
+      },
+      {
+        id: "gold",
+        name: "Gold/Royal",
+        accent: "#F5B301",
+        accent2:"#1D4ED8",
+        accent3:"#111827",
+        led:"#F5B301",
+        run:"#F5B301",
+        bike:"#1D4ED8",
+        swim:"#06B6D4"
+      },
+      {
+        id: "mint",
+        name: "Mint/Carbon",
+        accent: "#2DFFB7",
+        accent2:"#0B1220",
+        accent3:"#22C55E",
+        led:"#2DFFB7",
+        run:"#22C55E",
+        bike:"#2DFFB7",
+        swim:"#0EA5E9"
+      },
+      {
+        id: "magenta",
+        name: "Magenta/Ice",
+        accent: "#FF2D95",
+        accent2:"#2563EB",
+        accent3:"#A7F3D0",
+        led:"#FF2D95",
+        run:"#FF2D95",
+        bike:"#2563EB",
+        swim:"#22D3EE"
+      }
+    ];
+
+    const THEME_KEY = "td_theme_v1";
+
+    function setVar(k, v){ document.documentElement.style.setProperty(k, v); }
+    function applyTheme(theme){
+      setVar("--accent", theme.accent);
+      setVar("--accent2", theme.accent2);
+      setVar("--accent3", theme.accent3);
+      setVar("--led", theme.led);
+      setVar("--run", theme.run);
+      setVar("--bike", theme.bike);
+      setVar("--swim", theme.swim);
+      localStorage.setItem(THEME_KEY, theme.id);
+      renderThemeButtons(theme.id);
+    }
+
+    function renderThemeButtons(activeId){
+      const host = document.getElementById("themes");
+      host.innerHTML = THEMES.map(t => `
+        <button class="themeBtn ${t.id===activeId?'active':''}" data-theme="${t.id}">
+          <span class="sw">
+            <i style="background:${t.accent}"></i>
+            <i style="background:${t.accent2}"></i>
+            <i style="background:${t.accent3}"></i>
+          </span>
+          ${t.name}
+        </button>
+      `).join("");
+
+      host.querySelectorAll("[data-theme]").forEach(btn=>{
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-theme");
+          const theme = THEMES.find(x=>x.id===id);
+          if (theme) applyTheme(theme);
+        });
+      });
+    }
+
+    // init theme
+    const saved = localStorage.getItem(THEME_KEY) || "volt";
+    applyTheme(THEMES.find(t=>t.id===saved) || THEMES[0]);
+
+    // =========================
+    // SAMPLE DATA
+    // =========================
     const data = {
       lastSync: new Date().toISOString().slice(0,10),
       goals: { runKm: 35, bikeHr: 4.5, swimM: 3000, totalHr: 9.0 },
@@ -437,32 +596,23 @@
     const $ = (id) => document.getElementById(id);
     $("year").textContent = new Date().getFullYear();
     $("lastSync").textContent = data.lastSync;
+    $("weekTag").textContent = "W" + getWeekNumber(new Date());
 
-    // goals
-    $("goalRun").textContent = data.goals.runKm;
-    $("goalBike").textContent = data.goals.bikeHr;
-    $("goalSwim").textContent = data.goals.swimM;
+    // LED values
+    $("runKm").innerHTML   = `${data.weekly.runKm}<small>km</small>`;
+    $("bikeHr").innerHTML  = `${data.weekly.bikeHr}<small>hr</small>`;
+    $("swimM").innerHTML   = `${data.weekly.swimM.toLocaleString()}<small>m</small>`;
+    $("totalHr").innerHTML = `${data.weekly.totalHr}<small>hr</small>`;
 
-    // weekly
-    $("runKm").textContent = data.weekly.runKm;
-    $("bikeHr").textContent = data.weekly.bikeHr;
-    $("swimM").textContent = data.weekly.swimM.toLocaleString();
-    $("totalHr").textContent = data.weekly.totalHr;
-
-    // progress bars
+    // Progress bars
     function pct(v, g){
       if (!g || g <= 0) return 0;
       return Math.max(0, Math.min(100, Math.round((v / g) * 100)));
     }
-    const pRun  = pct(data.weekly.runKm,  data.goals.runKm);
-    const pBike = pct(data.weekly.bikeHr, data.goals.bikeHr);
-    const pSwim = pct(data.weekly.swimM,  data.goals.swimM);
-    const pTot  = pct(data.weekly.totalHr,data.goals.totalHr);
-
-    $("barRun").style.width   = pRun  + "%";
-    $("barBike").style.width  = pBike + "%";
-    $("barSwim").style.width  = pSwim + "%";
-    $("barTotal").style.width = pTot  + "%";
+    $("barRun").style.width   = pct(data.weekly.runKm,   data.goals.runKm)  + "%";
+    $("barBike").style.width  = pct(data.weekly.bikeHr,  data.goals.bikeHr) + "%";
+    $("barSwim").style.width  = pct(data.weekly.swimM,   data.goals.swimM)  + "%";
+    $("barTotal").style.width = pct(data.weekly.totalHr, data.goals.totalHr)+ "%";
 
     // today
     $("todayName").textContent = data.today.name;
@@ -488,8 +638,7 @@
       return "";
     }
 
-    const feed = $("feed");
-    feed.innerHTML = data.activities.map(a => `
+    $("feed").innerHTML = data.activities.map(a => `
       <div class="activity ${cardClass(a.type)}">
         <div class="icon ${iconClass(a.type)}" aria-hidden="true">${iconFor(a.type)}</div>
         <div>
@@ -505,7 +654,7 @@
     `).join("");
 
     // done state
-    const DONE_KEY = "training_feed_volt_done";
+    const DONE_KEY = "td_done_v1";
     function refreshDone(){
       const done = localStorage.getItem(DONE_KEY) === "1";
       $("markDone").textContent = done ? "已完成 ✅" : "標記完成";
@@ -524,12 +673,21 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "training-feed-volt-sample.json";
+      a.download = "training-dashboard-sample.json";
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
     });
+
+    // Week number helper (ISO-ish)
+    function getWeekNumber(d){
+      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const dayNum = date.getUTCDay() || 7;
+      date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+      return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    }
   </script>
 </body>
 </html>
