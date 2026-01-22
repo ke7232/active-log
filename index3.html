@@ -6,42 +6,51 @@
   <title>Training Feed</title>
   <style>
     :root{
-      --bg:#0b0f14;
-      --panel:#111827;
-      --panel2:#0f172a;
-      --fg:#e5e7eb;
-      --muted:#94a3b8;
-      --border: rgba(148,163,184,.18);
-      --shadow: 0 18px 55px rgba(0,0,0,.45);
-      --shadow2: 0 4px 18px rgba(0,0,0,.35);
+      /* Base (light) */
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --fg:#0b1220;          /* 深墨 */
+      --muted:#64748b;
+      --border: rgba(15,23,42,.10);
+      --shadow: 0 16px 40px rgba(2,6,23,.08);
+      --shadow2: 0 6px 20px rgba(2,6,23,.08);
       --radius:16px;
-      --pad:16px;
       --max: 1120px;
-      --accent:#fc4c02;       /* Strava 橘 */
-      --accent2:#ff6a2b;
-      --good:#22c55e;
+
+      /* Power colors */
+      --accent:#ff4d00;      /* 能量橘 */
+      --accent2:#ff7a2f;     /* 橘亮 */
+      --blue:#2563eb;        /* 電藍 */
+      --blue2:#60a5fa;       /* 淺藍 */
+      --good:#16a34a;
       --warn:#f59e0b;
       --bad:#ef4444;
+
+      --chip:#f1f5f9;
+      --ink:#0f172a;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
-      background:
-        radial-gradient(900px 500px at 15% 0%, rgba(252,76,2,.18), rgba(252,76,2,0) 60%),
-        radial-gradient(800px 480px at 85% 10%, rgba(59,130,246,.16), rgba(59,130,246,0) 60%),
-        linear-gradient(180deg, #070a0f 0%, var(--bg) 28%, #070a0f 100%);
       color:var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
                    "PingFang TC","Noto Sans TC","Microsoft JhengHei", Arial, sans-serif;
       line-height:1.45;
+      background:
+        radial-gradient(1000px 600px at 12% 0%, rgba(255,77,0,.18), rgba(255,77,0,0) 55%),
+        radial-gradient(900px 520px at 88% 5%, rgba(37,99,235,.16), rgba(37,99,235,0) 55%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 40%, #ffffff 100%);
     }
     a{color:inherit; text-decoration:none}
+
     .wrap{max-width:var(--max); margin:0 auto; padding:22px 16px 54px;}
+
     header{
       display:flex; align-items:center; justify-content:space-between; gap:14px;
       padding: 14px 14px;
       border:1px solid var(--border);
-      background: rgba(17,24,39,.55);
+      background: rgba(255,255,255,.78);
       backdrop-filter: blur(10px);
       border-radius: 18px;
       box-shadow: var(--shadow2);
@@ -50,40 +59,59 @@
     .logo{
       width:40px; height:40px; border-radius:14px;
       background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), rgba(255,255,255,0) 55%),
-        linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, #ff8a56 100%);
-      box-shadow: 0 12px 35px rgba(252,76,2,.25);
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.65), rgba(255,255,255,0) 55%),
+        linear-gradient(135deg, var(--accent) 0%, var(--accent2) 55%, #ffb38c 100%);
+      box-shadow: 0 14px 36px rgba(255,77,0,.22);
+      position:relative;
+      overflow:hidden;
     }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-30px -60px auto auto;
+      width:120px; height:120px;
+      background: radial-gradient(circle at 30% 30%, rgba(37,99,235,.35), rgba(37,99,235,0) 60%);
+      transform: rotate(14deg);
+    }
+
     h1{margin:0; font-size:18px; letter-spacing:.2px}
     .sub{margin:4px 0 0; color:var(--muted); font-size:12px}
+
     .right{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end}
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 10px;
       border:1px solid var(--border);
-      background: rgba(15,23,42,.6);
+      background: rgba(255,255,255,.8);
       border-radius:999px;
       color:var(--muted);
       font-size:12px;
     }
     .dot{width:8px; height:8px; border-radius:999px; background: var(--good)}
+
     .btn{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(15,23,42,.55);
-      color:var(--fg);
+      border:1px solid rgba(15,23,42,.12);
+      background: rgba(255,255,255,.9);
+      color:var(--ink);
       padding:9px 12px;
       border-radius:12px;
       cursor:pointer;
       font-size:13px;
+      box-shadow: 0 1px 0 rgba(2,6,23,.04);
     }
-    .btn:hover{background: rgba(15,23,42,.8)}
+    .btn:hover{background:#f8fafc}
     .btn.primary{
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%);
-      border-color: rgba(252,76,2,.35);
-      box-shadow: 0 14px 38px rgba(252,76,2,.18);
-      font-weight:800;
+      color:#fff;
+      border-color: rgba(255,77,0,.25);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 70%);
+      box-shadow: 0 16px 38px rgba(255,77,0,.18);
+      font-weight:900;
     }
     .btn.primary:hover{filter: brightness(1.02)}
+    .btn.ghost{
+      border-color: rgba(37,99,235,.18);
+      background: rgba(37,99,235,.06);
+    }
+
     .layout{
       display:grid;
       grid-template-columns: 380px 1fr;
@@ -92,36 +120,52 @@
     }
     .card{
       border:1px solid var(--border);
-      background: rgba(17,24,39,.55);
+      background: rgba(255,255,255,.85);
       backdrop-filter: blur(10px);
       border-radius: var(--radius);
-      box-shadow: var(--shadow2);
+      box-shadow: var(--shadow);
       overflow:hidden;
     }
     .hd{
       padding:14px 16px;
-      border-bottom:1px solid rgba(148,163,184,.14);
+      border-bottom:1px solid rgba(15,23,42,.08);
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
     .hd h2{margin:0; font-size:13px; letter-spacing:.2px}
     .bd{padding:16px}
+
+    /* Summary */
     .kpiGrid{
       display:grid;
       grid-template-columns: repeat(2, minmax(0,1fr));
       gap:12px;
     }
     .kpi{
-      border:1px solid rgba(148,163,184,.14);
-      background: rgba(15,23,42,.55);
+      border:1px solid rgba(15,23,42,.10);
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
       border-radius:14px;
       padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .kpi:after{
+      content:"";
+      position:absolute; inset:auto -40px -50px auto;
+      width:140px; height:140px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,77,0,.16), rgba(255,77,0,0) 60%);
+      transform: rotate(12deg);
+      pointer-events:none;
+    }
+    .kpi.blue:after{
+      background: radial-gradient(circle at 30% 30%, rgba(37,99,235,.16), rgba(37,99,235,0) 60%);
     }
     .kpi .label{margin:0 0 8px; color:var(--muted); font-size:12px}
-    .kpi .value{margin:0; font-size:22px; font-weight:900}
-    .kpi .unit{font-size:12px; color:var(--muted); font-weight:800}
+    .kpi .value{margin:0; font-size:22px; font-weight:950; letter-spacing:.2px}
+    .kpi .unit{font-size:12px; color:var(--muted); font-weight:900}
+
     .bar{
       height:8px;
-      background: rgba(148,163,184,.12);
+      background: rgba(15,23,42,.08);
       border-radius:999px;
       overflow:hidden;
       margin-top:10px;
@@ -129,9 +173,13 @@
     .bar > i{
       display:block; height:100%;
       width: 60%;
-      background: linear-gradient(90deg, var(--accent), #ff8a56);
+      background: linear-gradient(90deg, var(--accent), #ff9a61);
       border-radius:999px;
     }
+    .bar.blue > i{
+      background: linear-gradient(90deg, var(--blue), var(--blue2));
+    }
+
     .mini{
       margin-top:10px;
       display:flex; gap:8px; flex-wrap:wrap;
@@ -140,21 +188,27 @@
       display:inline-flex; align-items:center; gap:8px;
       padding:7px 10px;
       border-radius:999px;
-      border:1px solid rgba(148,163,184,.14);
-      background: rgba(15,23,42,.55);
+      border:1px solid rgba(15,23,42,.10);
+      background: var(--chip);
       color: var(--muted);
       font-size:12px;
-      font-weight:800;
+      font-weight:900;
     }
-    .chip b{color:var(--fg)}
+    .chip b{color:var(--ink)}
+    .chip .mark{
+      width:8px; height:8px; border-radius:99px; display:inline-block;
+      background: var(--accent);
+    }
+    .chip.blue .mark{background: var(--blue)}
+
     .today{
-      border:1px dashed rgba(252,76,2,.35);
-      background: rgba(252,76,2,.08);
+      border:1px dashed rgba(255,77,0,.40);
+      background: linear-gradient(180deg, rgba(255,77,0,.10), rgba(255,77,0,.05));
       border-radius:16px;
       padding:14px;
       margin-top:12px;
     }
-    .today .name{margin:0; font-weight:900}
+    .today .name{margin:0; font-weight:950}
     .today .desc{margin:6px 0 0; color:var(--muted); font-size:12px}
 
     /* Feed */
@@ -164,18 +218,41 @@
       grid-template-columns: 64px 1fr;
       gap:12px;
       padding:14px;
-      border:1px solid rgba(148,163,184,.14);
-      background: rgba(15,23,42,.55);
+      border:1px solid rgba(15,23,42,.10);
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
       border-radius:16px;
+      box-shadow: 0 1px 0 rgba(2,6,23,.04);
     }
     .icon{
       width:48px; height:48px; border-radius:14px;
       display:grid; place-items:center;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      font-weight:900;
-      color: var(--fg);
+      background: rgba(15,23,42,.04);
+      border:1px solid rgba(15,23,42,.10);
+      font-weight:950;
+      color: var(--ink);
+      position:relative;
+      overflow:hidden;
     }
+    .icon.run{
+      border-color: rgba(255,77,0,.30);
+      box-shadow: 0 12px 24px rgba(255,77,0,.12);
+    }
+    .icon.bike{
+      border-color: rgba(37,99,235,.26);
+      box-shadow: 0 12px 24px rgba(37,99,235,.10);
+    }
+    .icon.swim{
+      border-color: rgba(14,165,233,.26);
+      box-shadow: 0 12px 24px rgba(14,165,233,.10);
+    }
+    .icon:after{
+      content:"";
+      position:absolute; inset:-18px -38px auto auto;
+      width:90px; height:90px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,77,0,.22), rgba(255,77,0,0) 60%);
+      transform: rotate(18deg);
+    }
+
     .activity h3{margin:0; font-size:14px}
     .metaLine{margin:6px 0 0; color:var(--muted); font-size:12px}
     .stats{
@@ -185,31 +262,30 @@
     .stat{
       padding:7px 10px;
       border-radius:12px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      color: var(--fg);
+      background: rgba(15,23,42,.04);
+      border:1px solid rgba(15,23,42,.08);
+      color: var(--ink);
       font-size:12px;
-      font-weight:800;
+      font-weight:900;
     }
-    .rpe{
-      color: var(--muted);
-      font-weight:800;
-    }
-    .rpe b{color: var(--fg)}
+    .rpe{color: var(--muted); font-weight:900;}
+    .rpe b{color: var(--ink)}
+
     .tag{
       display:inline-flex; align-items:center; gap:8px;
       padding:7px 10px;
       border-radius:999px;
-      border:1px solid rgba(148,163,184,.14);
-      background: rgba(15,23,42,.55);
+      border:1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.85);
       color: var(--muted);
       font-size:12px;
-      font-weight:800;
+      font-weight:900;
     }
     .tag i{
       width:8px; height:8px; border-radius:999px; display:inline-block;
       background: var(--good);
     }
+
     footer{
       margin-top:14px;
       color: var(--muted);
@@ -217,6 +293,7 @@
       text-align:center;
       opacity:.9;
     }
+
     @media (max-width: 980px){
       .layout{grid-template-columns: 1fr}
       .right{justify-content:flex-start}
@@ -231,12 +308,12 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Training Feed</h1>
-          <div class="sub">Strava 風格：Summary + 活動動態</div>
+          <div class="sub">白底 Power 風格：Summary + Activities（橘 x 藍）</div>
         </div>
       </div>
       <div class="right">
         <span class="pill"><span class="dot"></span> Last sync: <span id="lastSync">—</span></span>
-        <a class="btn" href="log.html">所有紀錄</a>
+        <a class="btn ghost" href="log.html">所有紀錄</a>
         <a class="btn primary" href="add.html">+ 新增紀錄</a>
       </div>
     </header>
@@ -256,15 +333,15 @@
               <p class="value"><span id="runKm">0</span> <span class="unit">km</span></p>
               <div class="bar"><i id="barRun"></i></div>
             </div>
-            <div class="kpi">
+            <div class="kpi blue">
               <p class="label">自行車</p>
               <p class="value"><span id="bikeHr">0</span> <span class="unit">hr</span></p>
-              <div class="bar"><i id="barBike"></i></div>
+              <div class="bar blue"><i id="barBike"></i></div>
             </div>
-            <div class="kpi">
+            <div class="kpi blue">
               <p class="label">游泳</p>
               <p class="value"><span id="swimM">0</span> <span class="unit">m</span></p>
-              <div class="bar"><i id="barSwim"></i></div>
+              <div class="bar blue"><i id="barSwim"></i></div>
             </div>
             <div class="kpi">
               <p class="label">總時間</p>
@@ -274,9 +351,9 @@
           </div>
 
           <div class="mini">
-            <span class="chip">目標跑量：<b id="goalRun">35</b> km</span>
-            <span class="chip">目標騎乘：<b id="goalBike">4.5</b> hr</span>
-            <span class="chip">目標游泳：<b id="goalSwim">3000</b> m</span>
+            <span class="chip"><span class="mark"></span> 目標跑量：<b id="goalRun">35</b> km</span>
+            <span class="chip blue"><span class="mark"></span> 目標騎乘：<b id="goalBike">4.5</b> hr</span>
+            <span class="chip blue"><span class="mark"></span> 目標游泳：<b id="goalSwim">3000</b> m</span>
           </div>
 
           <div class="today">
@@ -290,7 +367,7 @@
         </div>
 
         <footer style="padding:0 16px 16px; text-align:left">
-          提醒：先把「新增紀錄 → 顯示 Feed」做起來，之後再接資料源。
+          建議：先把資料存 localStorage（免後端），三種 UI 都讀同一份資料方便比較。
         </footer>
       </div>
 
@@ -313,7 +390,7 @@
   </div>
 
   <script>
-    // ====== 假資料 ======
+    // ====== 假資料（之後可接 localStorage / Google Sheet） ======
     const data = {
       lastSync: new Date().toISOString().slice(0,10),
       goals: { runKm: 35, bikeHr: 4.5, swimM: 3000, totalHr: 9.0 },
@@ -323,12 +400,12 @@
         desc: "5×800m @ 3:45/km，組間休 2'；含熱身收操"
       },
       activities: [
-        { date:"2026-01-22", type:"Run",  title:"Interval Run",  dist:"11 km", time:"55:10", elev:"+85 m",  rpe:8, note:"5×800m interval" },
-        { date:"2026-01-21", type:"Swim", title:"Pool Workout",  dist:"1800 m", time:"45:00", elev:"—",     rpe:6, note:"Drills + steady" },
-        { date:"2026-01-20", type:"Bike", title:"Trainer Tempo", dist:"75 min", time:"75:00", elev:"—",     rpe:7, note:"Tempo blocks" },
-        { date:"2026-01-19", type:"Run",  title:"Easy Run",      dist:"5 km",  time:"33:20", elev:"+30 m",  rpe:5, note:"Keep Z2" },
-        { date:"2026-01-18", type:"Bike", title:"Z2 Endurance",  dist:"60 min", time:"60:00", elev:"—",     rpe:6, note:"Cadence focus" },
-        { date:"2026-01-17", type:"Swim", title:"Mixed Drills",  dist:"1400 m", time:"40:00", elev:"—",     rpe:7, note:"Technique + intervals" },
+        { date:"2026-01-22", type:"Run",  title:"Interval Run",  dist:"11 km",  time:"55:10", elev:"+85 m", rpe:8, note:"5×800m interval" },
+        { date:"2026-01-21", type:"Swim", title:"Pool Workout",  dist:"1800 m", time:"45:00", elev:"—",    rpe:6, note:"Drills + steady" },
+        { date:"2026-01-20", type:"Bike", title:"Trainer Tempo", dist:"75 min", time:"75:00", elev:"—",    rpe:7, note:"Tempo blocks" },
+        { date:"2026-01-19", type:"Run",  title:"Easy Run",      dist:"5 km",   time:"33:20", elev:"+30 m",rpe:5, note:"Keep Z2" },
+        { date:"2026-01-18", type:"Bike", title:"Z2 Endurance",  dist:"60 min", time:"60:00", elev:"—",    rpe:6, note:"Cadence focus" },
+        { date:"2026-01-17", type:"Swim", title:"Mixed Drills",  dist:"1400 m", time:"40:00", elev:"—",    rpe:7, note:"Technique + intervals" },
       ]
     };
 
@@ -368,18 +445,22 @@
 
     // feed
     function iconFor(type){
-      // 不用 SVG，純字母極簡
       if (type === "Run") return "R";
       if (type === "Bike") return "B";
       if (type === "Swim") return "S";
       return "•";
     }
+    function iconClass(type){
+      if (type === "Run") return "run";
+      if (type === "Bike") return "bike";
+      if (type === "Swim") return "swim";
+      return "";
+    }
+
     const feed = $("feed");
     feed.innerHTML = data.activities.map(a => `
       <div class="activity">
-        <div class="icon" aria-hidden="true" style="${a.type==='Run'?'outline: 1px solid rgba(252,76,2,.25)': ''}">
-          ${iconFor(a.type)}
-        </div>
+        <div class="icon ${iconClass(a.type)}" aria-hidden="true">${iconFor(a.type)}</div>
         <div>
           <h3>${a.title} <span class="rpe">· RPE <b>${a.rpe}</b></span></h3>
           <div class="metaLine">${a.date} · <span style="color:var(--muted)">${a.type}</span> · ${a.note}</div>
@@ -393,11 +474,11 @@
     `).join("");
 
     // done state
-    const DONE_KEY = "training_feed_today_done";
+    const DONE_KEY = "training_feed_light_done";
     function refreshDone(){
       const done = localStorage.getItem(DONE_KEY) === "1";
       $("markDone").textContent = done ? "已完成 ✅" : "標記完成";
-      $("markDone").style.opacity = done ? "0.75" : "1";
+      $("markDone").style.opacity = done ? "0.78" : "1";
     }
     $("markDone").addEventListener("click", () => {
       const done = localStorage.getItem(DONE_KEY) === "1";
@@ -412,7 +493,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "training-feed-sample.json";
+      a.download = "training-feed-light-sample.json";
       document.body.appendChild(a);
       a.click();
       a.remove();
