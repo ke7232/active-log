@@ -2,14 +2,13 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale hooking" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Race Dash · Training</title>
   <style>
     /* =========================
        RACE DASH THEME SYSTEM
        ========================= */
     :root{
-      /* Layout */
       --max: 1240px;
       --radius: 18px;
 
@@ -25,11 +24,11 @@
       --muted: rgba(230, 237, 247, .70);
       --dim: rgba(230, 237, 247, .52);
 
-      /* Mercedes 2024-ish: carbon + silver + PETRONAS teal */
-      --accent: #00E5C8;     /* PETRONAS teal vibe */
+      /* Mercedes 2024 vibe: carbon + silver + PETRONAS teal */
+      --accent: #00E5C8;     /* PETRONAS teal */
       --accent2:#B7C3D0;     /* silver */
-      --accent3:#00A3FF;     /* electric blue (HUD contrast) */
-      --danger: #ff2b4a;     /* INEOS-ish red accent for alerts */
+      --accent3:#00A3FF;     /* electric blue */
+      --danger: #ff2b4a;
 
       /* Sports types */
       --run:  #00E5C8;
@@ -96,7 +95,7 @@
     }
 
     /* =========================
-       TOP BAR (like steering wheel header)
+       TOP BAR
        ========================= */
     header{
       display:flex; align-items:center; justify-content:space-between; gap:12px;
@@ -152,6 +151,7 @@
       cursor:pointer;
       font-size:12px;
       letter-spacing:.2px;
+      user-select:none;
     }
     .btn:hover{background: rgba(255,255,255,.07)}
     .btn.primary{
@@ -217,16 +217,14 @@
       color: var(--muted);
       font-size:12px;
     }
-    .hd .mode b{color: var(--fg)}
+    .hd .mode b{color: var(--fg); cursor:pointer; user-select:none}
 
     .bd{padding:16px}
 
     /* =========================
-       ELECTRONIC DASHBOARD BLOCKS
+       ELECTRONIC DASHBOARD
        ========================= */
-    .dash{
-      display:grid; gap:12px;
-    }
+    .dash{display:grid; gap:12px;}
 
     .hudRow{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -235,9 +233,7 @@
       border-radius:14px;
       background: rgba(255,255,255,.03);
     }
-    .hudRow .left{
-      min-width:0;
-    }
+    .hudRow .left{min-width:0;}
     .hudRow .label{
       margin:0; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--muted);
     }
@@ -245,11 +241,7 @@
       margin:6px 0 0; font-size:12px; color:rgba(230,237,247,.86);
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .hudRow .right{
-      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
-    }
 
-    /* LED dot-matrix number */
     .ledBox{
       border:1px solid rgba(255,255,255,.10);
       border-radius: 16px;
@@ -262,13 +254,17 @@
       overflow:hidden;
       box-shadow: var(--shadow2);
     }
+    /* soften decoration (no ugly big glass block) */
     .ledBox:after{
       content:"";
-      position:absolute; inset:auto -50px -70px auto;
-      width:200px; height:200px;
-      background: radial-gradient(circle at 30% 30%, rgba(0,229,200,.22), rgba(0,229,200,0) 60%);
-      transform: rotate(14deg);
+      position:absolute;
+      inset:auto auto -120px -140px;
+      width:260px; height:260px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(0,229,200,.14), rgba(0,229,200,0) 62%);
+      transform: rotate(0deg);
       pointer-events:none;
+      opacity:.65;
     }
 
     .kpiGrid{
@@ -297,20 +293,45 @@
     }
     .kpi .cap .unit{opacity:.75}
 
+    /* =========================
+       LED DOT MATRIX - CLEAR VERSION
+       ========================= */
     .ledNum{
-      font-weight:950;
-      font-size:34px;
-      letter-spacing:2px;
-      line-height:1;
-      color: color-mix(in srgb, var(--led) 90%, white);
-      text-shadow: 0 0 12px rgba(0,229,200,.38), 0 0 28px rgba(0,163,255,.18);
-      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,.95) 42%, rgba(0,0,0,0) 44%);
-      mask-image: radial-gradient(circle, rgba(0,0,0,.95) 42%, rgba(0,0,0,0) 44%);
-      -webkit-mask-size: 6px 6px;
-      mask-size: 6px 6px;
+      position: relative;
+      display: inline-block;
+      font-weight: 950;
+      font-size: 36px;             /* bigger */
+      letter-spacing: 2px;
+      line-height: 1;
+      color: color-mix(in srgb, var(--led) 92%, white);
+
+      /* glow: less blur, more crisp */
+      text-shadow:
+        0 0 6px  color-mix(in srgb, var(--led) 40%, transparent),
+        0 0 14px color-mix(in srgb, var(--led) 22%, transparent);
+
+      /* dot matrix: larger dots + spacing */
+      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 52%, rgba(0,0,0,0) 56%);
+      mask-image: radial-gradient(circle, rgba(0,0,0,1) 52%, rgba(0,0,0,0) 56%);
+      -webkit-mask-size: 7px 7px;
+      mask-size: 7px 7px;
       -webkit-mask-repeat: repeat;
       mask-repeat: repeat;
+
+      filter: contrast(1.15) saturate(1.05);
     }
+    /* faint solid number behind for readability */
+    .ledNum::before{
+      content: attr(data-solid);
+      position:absolute;
+      inset: 0;
+      color: rgba(230, 237, 247, .18);
+      text-shadow: none;
+      -webkit-mask: none;
+      mask: none;
+      pointer-events:none;
+    }
+
     .ledNum small{
       font-size:14px;
       letter-spacing:1px;
@@ -333,20 +354,54 @@
       box-shadow: var(--glowA);
     }
     .bar.bike > i{background: linear-gradient(90deg, var(--bike), var(--accent3)); box-shadow: var(--glowB)}
-    .bar.swim > i{background: linear-gradient(90deg, var(--swim), var(--accent));}
+    .bar.swim > i{background: linear-gradient(90deg, var(--swim), var(--accent)); box-shadow:none}
     .bar.total > i{background: linear-gradient(90deg, var(--accent), var(--accent2));}
 
-    /* Today card */
+    /* Today card + NEW HUD corner style */
     .today{
       border:1px dashed rgba(0,229,200,.22);
       border-radius:16px;
       background: rgba(0,229,200,.06);
       padding:14px;
       margin-top:12px;
+      position:relative;
+      overflow:hidden;
     }
     .today .t{margin:0; font-weight:950}
     .today .d{margin:6px 0 0; color:var(--muted); font-size:12px}
     .mini{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+
+    /* Replace ugly block with clean HUD hatch */
+    .today::after{
+      content:"";
+      position:absolute;
+      right:-40px; bottom:-40px;
+      width:220px; height:220px;
+      border-radius: 24px;
+      border:1px solid rgba(255,255,255,.08);
+      background:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255,255,255,.06) 0px,
+          rgba(255,255,255,.06) 2px,
+          rgba(255,255,255,0) 2px,
+          rgba(255,255,255,0) 10px
+        );
+      box-shadow: 0 0 0 1px rgba(0,229,200,.08) inset;
+      opacity: .55;
+      pointer-events:none;
+    }
+    .today::before{
+      content:"";
+      position:absolute;
+      right:18px; bottom:18px;
+      width:64px; height:64px;
+      border-right:2px solid rgba(0,229,200,.45);
+      border-bottom:2px solid rgba(0,229,200,.45);
+      border-radius: 6px;
+      opacity:.7;
+      pointer-events:none;
+    }
 
     /* =========================
        FEED (RACE HUD)
@@ -464,6 +519,7 @@
           <h2>Driver Display</h2>
           <div class="mode">Drive mode: <b id="driveMode">QUALI</b></div>
         </div>
+
         <div class="bd">
           <div class="dash">
             <div class="hudRow">
@@ -491,25 +547,25 @@
               <div class="kpiGrid">
                 <div class="kpi">
                   <div class="cap"><span>RUN</span><span class="unit">KM</span></div>
-                  <div class="ledNum" id="runKm">0<small>km</small></div>
+                  <div class="ledNum" id="runKm" data-solid="0km">0<small>km</small></div>
                   <div class="bar"><i id="barRun"></i></div>
                 </div>
 
                 <div class="kpi">
                   <div class="cap"><span>BIKE</span><span class="unit">HR</span></div>
-                  <div class="ledNum" id="bikeHr">0<small>hr</small></div>
+                  <div class="ledNum" id="bikeHr" data-solid="0hr">0<small>hr</small></div>
                   <div class="bar bike"><i id="barBike"></i></div>
                 </div>
 
                 <div class="kpi">
                   <div class="cap"><span>SWIM</span><span class="unit">M</span></div>
-                  <div class="ledNum" id="swimM">0<small>m</small></div>
+                  <div class="ledNum" id="swimM" data-solid="0m">0<small>m</small></div>
                   <div class="bar swim"><i id="barSwim"></i></div>
                 </div>
 
                 <div class="kpi">
                   <div class="cap"><span>TOTAL</span><span class="unit">HR</span></div>
-                  <div class="ledNum" id="totalHr">0<small>hr</small></div>
+                  <div class="ledNum" id="totalHr" data-solid="0hr">0<small>hr</small></div>
                   <div class="bar total"><i id="barTotal"></i></div>
                 </div>
               </div>
@@ -633,7 +689,7 @@
       }
     ];
 
-    const THEME_KEY = "race_dash_theme_v1";
+    const THEME_KEY = "race_dash_theme_v2";
 
     function setVar(k,v){ document.documentElement.style.setProperty(k,v); }
     function applyTheme(themeId){
@@ -697,11 +753,22 @@
 
     $("weekTag").textContent = "W" + getWeekNumber(new Date());
 
-    // LED values
-    $("runKm").innerHTML   = `${data.weekly.runKm}<small>km</small>`;
-    $("bikeHr").innerHTML  = `${data.weekly.bikeHr}<small>hr</small>`;
-    $("swimM").innerHTML   = `${data.weekly.swimM.toLocaleString()}<small>m</small>`;
-    $("totalHr").innerHTML = `${data.weekly.totalHr}<small>hr</small>`;
+    // LED values + solid fallback text for clarity
+    const runEl = $("runKm");
+    runEl.setAttribute("data-solid", `${data.weekly.runKm}km`);
+    runEl.innerHTML = `${data.weekly.runKm}<small>km</small>`;
+
+    const bikeEl = $("bikeHr");
+    bikeEl.setAttribute("data-solid", `${data.weekly.bikeHr}hr`);
+    bikeEl.innerHTML = `${data.weekly.bikeHr}<small>hr</small>`;
+
+    const swimEl = $("swimM");
+    swimEl.setAttribute("data-solid", `${data.weekly.swimM}m`);
+    swimEl.innerHTML = `${data.weekly.swimM.toLocaleString()}<small>m</small>`;
+
+    const totEl = $("totalHr");
+    totEl.setAttribute("data-solid", `${data.weekly.totalHr}hr`);
+    totEl.innerHTML = `${data.weekly.totalHr}<small>hr</small>`;
 
     // Progress bars
     function pct(v,g){
@@ -726,8 +793,7 @@
       if (type==="Swim") return "swim";
       return "";
     }
-    const feed = $("feed");
-    feed.innerHTML = data.activities.map(a => `
+    $("feed").innerHTML = data.activities.map(a => `
       <div class="act ${cls(a.type)}">
         <div class="ic ${cls(a.type)}" aria-hidden="true">${iconFor(a.type)}</div>
         <div>
@@ -743,7 +809,7 @@
     `).join("");
 
     // Done state
-    const DONE_KEY="race_dash_done_v1";
+    const DONE_KEY="race_dash_done_v2";
     function refreshDone(){
       const done = localStorage.getItem(DONE_KEY)==="1";
       $("markDone").textContent = done ? "DONE ✅" : "DONE";
@@ -767,13 +833,10 @@
       URL.revokeObjectURL(url);
     });
 
-    // Simple drive mode flip (fun)
+    // Drive mode flip (fun)
     const modes = ["QUALI","RACE","ENDURO","RECOVERY"];
     let mi = 0;
-    document.getElementById("driveMode").addEventListener?.("click", ()=>{});
-    // click title to cycle mode
-    document.querySelector(".mode b").style.cursor="pointer";
-    document.querySelector(".mode b").addEventListener("click", ()=>{
+    $("driveMode").addEventListener("click", ()=>{
       mi = (mi+1)%modes.length;
       $("driveMode").textContent = modes[mi];
     });
