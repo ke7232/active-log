@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Active Log - F1 Style Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>運動紀錄儀表板 - F1 競技版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+TC:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --petronas-green: #00A19B;
@@ -16,8 +16,8 @@
             --f1-red: #FF0000;
             --f1-yellow: #FFFF00;
             --f1-blue: #007bff;
-            --font-display: 'Orbitron', sans-serif; /* 用於標題和重要數據 */
-            --font-mono: 'Share Tech Mono', monospace; /* 用於小數據和程式碼感 */
+            --font-display: 'Orbitron', 'Noto Sans TC', sans-serif;
+            --font-mono: 'Share Tech Mono', monospace;
         }
 
         body {
@@ -25,353 +25,236 @@
             padding: 0;
             background-color: var(--f1-black-dark);
             color: var(--f1-white);
-            font-family: var(--font-mono);
+            font-family: 'Noto Sans TC', sans-serif;
             display: flex;
-            flex-direction: column;
+            flex-grow: 1;
             min-height: 100vh;
-            overflow: hidden; /* 防止滾動條影響整體視覺 */
+            overflow-x: hidden;
         }
 
-        /* 主容器佈局 */
         .dashboard-container {
             display: grid;
-            grid-template-columns: 200px 1fr 250px; /* 左側導航, 中央內容, 右側側邊欄 */
-            grid-template-rows: auto 1fr; /* 頂部標題, 主內容 */
+            grid-template-columns: 220px 1fr 280px;
+            grid-template-rows: auto 1fr;
             gap: 15px;
             padding: 15px;
-            flex-grow: 1;
+            width: 100%;
         }
 
-        /* 頂部標題 */
+        /* 頂部標題區 */
         .dashboard-header {
-            grid-column: 1 / -1; /* 佔滿所有列 */
+            grid-column: 1 / -1;
             background-color: var(--f1-black-medium);
             padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--petronas-green);
+            border-bottom: 3px solid var(--petronas-green);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
+
         .dashboard-header h1 {
             font-family: var(--font-display);
-            color: var(--f1-white);
             margin: 0;
-            font-size: 1.8em;
-            letter-spacing: 2px;
+            font-size: 1.6em;
+            letter-spacing: 1px;
         }
-        .dashboard-header .status-indicator {
-            display: flex;
-            gap: 8px;
-        }
-        .status-light {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--f1-gray);
-            box-shadow: 0 0 5px var(--f1-gray);
-        }
-        .status-light.active { background-color: var(--petronas-green); box-shadow: 0 0 10px var(--petronas-green); }
-        .status-light.alert { background-color: var(--f1-red); box-shadow: 0 0 10px var(--f1-red); }
 
-        /* 左側導航 (按鈕區) */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+        }
+
+        .status-light {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--petronas-green);
+            box-shadow: 0 0 10px var(--petronas-green);
+        }
+
+        /* 左側導航按鈕 */
         .dashboard-nav {
             background-color: var(--f1-black-medium);
             padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            border-right: 1px solid var(--f1-black-light);
-            border-radius: 5px;
+            gap: 12px;
+            border-radius: 8px;
         }
 
-        /* 中央主內容區 */
+        .f1-btn {
+            width: 100%;
+            padding: 14px 12px;
+            border: none;
+            cursor: pointer;
+            color: var(--f1-white);
+            font-weight: bold;
+            font-size: 0.95em;
+            text-align: left;
+            transition: 0.3s;
+            background-color: transparent;
+            border-radius: 4px;
+        }
+
+        /* 五種按鈕樣式套用 */
+        .btn-glow { border: 1px solid var(--petronas-green); }
+        .btn-glow:hover { background: var(--petronas-green); color: black; box-shadow: 0 0 15px var(--petronas-green); }
+
+        .btn-carbon { 
+            background: repeating-linear-gradient(-45deg, #1a1a1a 0px, #1a1a1a 2px, #111 2px, #111 4px); 
+            border-bottom: 3px solid #000;
+        }
+        .btn-carbon:hover { border-bottom-color: var(--petronas-green); }
+
+        .btn-monitor { 
+            background: var(--f1-black-light); 
+            border-left: 5px solid var(--petronas-green); 
+            display: flex; 
+            justify-content: space-between; 
+        }
+
+        .btn-knob { border: 2px dashed var(--f1-yellow); color: var(--f1-yellow); }
+        .btn-knob:hover { background: var(--f1-yellow); color: black; }
+
+        .btn-aero { 
+            border: 1px solid var(--f1-blue);
+            background: linear-gradient(90deg, transparent, rgba(0,123,255,0.3), transparent);
+            background-size: 200% 100%;
+            animation: flow 3s infinite linear;
+        }
+        @keyframes flow { 0% {background-position: 200% 0;} 100% {background-position: -200% 0;} }
+
+        /* 中央內容區 */
         .dashboard-main {
             background-color: var(--f1-black-medium);
             padding: 20px;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .main-section-title {
-            font-family: var(--font-display);
-            color: var(--petronas-green);
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            border-bottom: 1px solid var(--f1-black-light);
-            padding-bottom: 5px;
-        }
-        .chart-container {
-            background-color: var(--f1-black-light);
-            border: 1px solid var(--petronas-green);
-            border-radius: 5px;
-            height: 300px; /* 圖表預留高度 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--f1-gray);
-            font-family: var(--font-display);
-            font-size: 1.2em;
+            border-radius: 8px;
         }
 
-        /* 右側側邊欄 (簡要數據) */
-        .dashboard-sidebar {
-            background-color: var(--f1-black-medium);
+        .section-title {
+            font-family: var(--font-display);
+            color: var(--petronas-green);
+            border-bottom: 1px solid var(--f1-black-light);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .data-card {
+            background: var(--f1-black-light);
             padding: 15px;
-            border-left: 1px solid var(--f1-black-light);
-            border-radius: 5px;
+            border-radius: 4px;
+            border-top: 2px solid var(--f1-gray);
+        }
+
+        .data-card.highlight { border-top-color: var(--petronas-green); }
+
+        .label { color: var(--f1-gray); font-size: 0.85em; display: block; margin-bottom: 5px; }
+        .value { font-family: var(--font-display); font-size: 1.5em; }
+
+        /* 右側數據欄 */
+        .dashboard-sidebar {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-        .sidebar-metric {
-            background-color: var(--f1-black-light);
-            padding: 10px 15px;
-            border-left: 3px solid var(--f1-gray);
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            transition: border-left-color 0.3s;
-        }
-        .sidebar-metric.good { border-left-color: var(--petronas-green); }
-        .sidebar-metric.warning { border-left-color: var(--f1-yellow); }
-        .sidebar-metric.critical { border-left-color: var(--f1-red); }
 
-        .metric-label {
-            color: var(--f1-gray);
-            font-size: 0.8em;
-            text-transform: uppercase;
-        }
-        .metric-value {
-            font-family: var(--font-display);
-            color: var(--f1-white);
-            font-size: 1.3em;
-            letter-spacing: 0.5px;
+        .sidebar-box {
+            background: var(--f1-black-medium);
+            padding: 15px;
+            border-radius: 8px;
         }
 
-        /* 進度條 */
-        .progress-bar-container {
-            width: 100%;
-            background-color: var(--f1-black-dark);
-            border: 1px solid var(--f1-black-light);
-            border-radius: 3px;
-            height: 15px;
-            overflow: hidden;
-            margin-top: 5px;
+        .progress-container {
+            background: #000;
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
         }
         .progress-bar {
             height: 100%;
-            width: 0%; /* 透過JS或CSS動畫設定 */
-            background: linear-gradient(90deg, var(--f1-blue), var(--petronas-green));
-            transition: width 0.5s ease-out;
-            border-radius: 3px;
-        }
-        .progress-bar.progress-75 { width: 75%; }
-        .progress-bar.progress-50 { width: 50%; background: linear-gradient(90deg, var(--f1-yellow), var(--petronas-green)); }
-        .progress-bar.progress-25 { width: 25%; background: linear-gradient(90deg, var(--f1-red), var(--f1-yellow)); }
-
-
-        /* 按鈕樣式 (同前面提供) */
-        .f1-btn {
-            width: 100%; /* 適應導航欄寬度 */
-            padding: 12px 10px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: all 0.3s ease-in-out;
-            color: var(--f1-white);
-            font-size: 0.9em;
-            letter-spacing: 0.8px;
-            background-color: transparent; /* 預設透明，由各樣式定義 */
-            border-radius: 3px;
-            text-align: left;
-        }
-        .f1-btn span { /* 為Monitor Style的文字定位 */
-            display: inline-block;
-        }
-
-        /* Style 1: 極速 Petronas (發光邊框) */
-        .btn-glow {
-            border: 1px solid rgba(0, 161, 155, 0.4);
-            box-shadow: inset 0 0 3px rgba(0, 161, 155, 0.2);
-        }
-        .btn-glow:hover {
-            box-shadow: 0 0 15px var(--petronas-green), inset 0 0 8px var(--petronas-green);
             background: var(--petronas-green);
-            color: var(--f1-black-dark);
-            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--petronas-green);
+            width: 75%;
         }
 
-        /* Style 2: Carbon Core (碳纖維質感) */
-        .btn-carbon {
-            background: repeating-linear-gradient(
-                -45deg,
-                var(--f1-black-light) 0px,
-                var(--f1-black-light) 2px,
-                var(--f1-black-dark) 2px,
-                var(--f1-black-dark) 4px
-            );
-            border-bottom: 3px solid #000;
-            position: relative;
-        }
-        .btn-carbon:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
-            box-shadow: inset 0 0 10px var(--petronas-green);
-        }
-
-        /* Style 3: Pit-Wall (數位監控) */
-        .btn-monitor {
-            background: var(--f1-black-light);
-            border-left: 4px solid var(--petronas-green);
-            text-align: left;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .btn-monitor span:last-child {
-            font-family: var(--font-display);
-            font-size: 1.1em;
-            color: var(--petronas-green);
-        }
-        .btn-monitor:hover {
-            background: #2A2A2A;
-            padding-left: 20px;
-        }
-        .btn-monitor.alert { border-left-color: var(--f1-red); } /* 範例：數據異常時變紅 */
-
-        /* Style 4: Tactile Switch (彩色旋鈕感) */
-        .btn-knob {
-            background: var(--f1-black-light);
-            border-radius: 20px; /* 稍微圓角矩形，更適合導航 */
-            border: 2px dashed rgba(255, 255, 0, 0.5); /* 黃色虛線 */
-            color: var(--f1-yellow);
-        }
-        .btn-knob:hover {
-            transform: rotate(2deg) scale(1.02); /* 輕微旋轉和放大 */
-            border-color: var(--f1-yellow);
-            color: var(--f1-black-dark);
-            background-color: var(--f1-yellow);
-            box-shadow: 0 0 10px var(--f1-yellow);
-        }
-
-        /* Style 5: Aero Stream (流體動畫) */
-        .btn-aero {
-            background: linear-gradient(90deg, transparent, rgba(0, 161, 155, 0.5), transparent);
-            background-size: 300% 100%;
-            animation: flow 4s infinite linear;
-            border: 1px solid var(--petronas-green);
-            overflow: hidden; /* 確保流動效果不超出按鈕 */
-        }
-        @keyframes flow {
-            0% { background-position: 200% 0; }
-            100% { background-position: -100% 0; }
-        }
-        .btn-aero:hover {
-            animation-duration: 2s; /* Hover時流動加速 */
-            box-shadow: 0 0 15px var(--petronas-green);
-        }
-
-        /* RWD 基礎調整 */
-        @media (max-width: 768px) {
-            .dashboard-container {
-                grid-template-columns: 1fr; /* 小螢幕下單列佈局 */
-                grid-template-rows: auto auto 1fr auto; /* 標題, 導航, 主內容, 側邊欄 */
-            }
-            .dashboard-nav {
-                flex-direction: row; /* 導航按鈕橫向排列 */
-                overflow-x: auto; /* 超出螢幕可滾動 */
-                padding-bottom: 5px;
-                border-right: none;
-                border-bottom: 1px solid var(--f1-black-light);
-                border-radius: 0;
-            }
-            .dashboard-nav .f1-btn {
-                min-width: 120px; /* 確保按鈕不會太窄 */
-                flex-shrink: 0; /* 防止被壓縮 */
-            }
-            .dashboard-header {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <header class="dashboard-header">
-            <h1>ActiveLog <span style="color:var(--f1-gray);">/ F1 Edition</span></h1>
-            <div class="status-indicator">
-                <div class="status-light active"></div>
-                <div class="status-light"></div>
-                <div class="status-light alert"></div>
-                <span style="font-size:0.9em; margin-left:10px;">SYSTEM ONLINE</span>
+
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <h1>ACTIVE-LOG <span style="color:var(--petronas-green)">性能儀表板</span></h1>
+        <div class="status-indicator">
+            <div class="status-light"></div>
+            系統就緒 / 2026 賽季中
+        </div>
+    </header>
+
+    <nav class="dashboard-nav">
+        <button class="f1-btn btn-glow">總覽首頁</button>
+        <button class="f1-btn btn-carbon">訓練區域 (Zones)</button>
+        <button class="f1-btn btn-monitor"><span>本週 TSS</span> <span>450</span></button>
+        <button class="f1-btn btn-knob">系統設定</button>
+        <button class="f1-btn btn-aero">數據導出匯出</button>
+    </nav>
+
+    <main class="dashboard-main">
+        <div class="section-title">
+            <span>訓練數據即時監控</span>
+            <span style="font-size: 0.6em; color: var(--f1-gray);">DATA-SYNC: ACTIVE</span>
+        </div>
+        
+        <div class="data-grid">
+            <div class="data-card highlight">
+                <span class="label">馬拉松目標進度 (4:40)</span>
+                <span class="value">75%</span>
+                <div class="progress-container"><div class="progress-bar"></div></div>
             </div>
-        </header>
-
-        <nav class="dashboard-nav">
-            <button class="f1-btn btn-glow">My Activity</button>
-            <button class="f1-btn btn-carbon">Training Zones</button>
-            <button class="f1-btn btn-monitor"><span>Weekly TSS</span> <span>250</span></button>
-            <button class="f1-btn btn-knob">Settings</button>
-            <button class="f1-btn btn-aero">Export Data</button>
-        </nav>
-
-        <main class="dashboard-main">
-            <h2 class="main-section-title">Performance Overview</h2>
-            <div class="chart-container">
-                <p>Chart Placeholder (e.g., Weekly Training Load Graph)</p>
-                </div>
-
-            <h2 class="main-section-title">Key Metrics</h2>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px;">
-                <div class="sidebar-metric good">
-                    <span class="metric-label">Avg Pace (Run)</span>
-                    <span class="metric-value">5:15 /km</span>
-                </div>
-                <div class="sidebar-metric warning">
-                    <span class="metric-label">Bike Watts (30m Avg)</span>
-                    <span class="metric-value">220 W</span>
-                </div>
-                <div class="sidebar-metric critical">
-                    <span class="metric-label">Swim Pace (100m)</span>
-                    <span class="metric-value">1:45</span>
-                </div>
-                <div class="sidebar-metric good">
-                    <span class="metric-label">Total Elevation (Week)</span>
-                    <span class="metric-value">850 m</span>
-                </div>
+            <div class="data-card">
+                <span class="label">跑步平均配速</span>
+                <span class="value">5:15 <small>/km</small></span>
             </div>
-        </main>
-
-        <aside class="dashboard-sidebar">
-            <h2 class="main-section-title" style="font-size:1.2em;">Quick Stats</h2>
-
-            <div class="sidebar-metric good">
-                <span class="metric-label">Last Activity</span>
-                <span class="metric-value">Bike Ride</span>
-                <span style="font-size:0.7em; color:var(--f1-gray);">2023-11-20 / 45km</span>
+            <div class="data-card">
+                <span class="label">單車 FTP 預估</span>
+                <span class="value">215 <small>W</small></span>
             </div>
-
-            <div class="sidebar-metric warning">
-                <span class="metric-label">Marathon Target Progress</span>
-                <span class="metric-value">75%</span>
-                <div class="progress-bar-container"><div class="progress-bar progress-75"></div></div>
+            <div class="data-card highlight">
+                <span class="label">游泳 100m 配速</span>
+                <span class="value">1:42</span>
             </div>
+        </div>
+    </main>
 
-            <div class="sidebar-metric">
-                <span class="metric-label">Next Race</span>
-                <span class="metric-value">Triathlon</span>
-                <span style="font-size:0.7em; color:var(--f1-gray);">2024-03-15 / Taipei</span>
-            </div>
+    <aside class="dashboard-sidebar">
+        <div class="sidebar-box">
+            <div class="label" style="color:var(--petronas-green)">最近一次活動</div>
+            <div class="value" style="font-size:1.1em">公路單車訓練</div>
+            <div style="font-size:0.8em; margin-top:5px; color:var(--f1-gray)">距離: 45.2 km / 爬升: 650m</div>
+        </div>
+        <div class="sidebar-box">
+            <div class="label">恢復狀態 (Recovery)</div>
+            <div class="value" style="color:var(--f1-yellow)">偏低 (55)</div>
+            <div class="progress-container"><div class="progress-bar" style="width:55%; background:var(--f1-yellow); box-shadow: 0 0 10px var(--f1-yellow);"></div></div>
+        </div>
+        <div class="sidebar-box">
+            <div class="label">下一場賽事倒數</div>
+            <div class="value" style="font-size:1.1em">鐵人三項 51.5</div>
+            <div style="font-family: var(--font-mono); color: var(--f1-red); margin-top:5px;">45 DAYS : 12H : 05M</div>
+        </div>
+    </aside>
+</div>
 
-            <div class="sidebar-metric critical">
-                <span class="metric-label">Recovery Score</span>
-                <span class="metric-value">55 / 100</span>
-                <div class="progress-bar-container"><div class="progress-bar progress-50"></div></div>
-            </div>
-        </aside>
-    </div>
 </body>
 </html>
