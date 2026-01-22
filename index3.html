@@ -1,853 +1,377 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Race Dash · Training</title>
-  <style>
-    /* =========================
-       RACE DASH THEME SYSTEM
-       ========================= */
-    :root{
-      --max: 1240px;
-      --radius: 18px;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Log - F1 Style Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --petronas-green: #00A19B;
+            --f1-black-dark: #0A0A0A;
+            --f1-black-medium: #121212;
+            --f1-black-light: #1A1A1A;
+            --f1-gray: #B0B0B0;
+            --f1-white: #FFFFFF;
+            --f1-red: #FF0000;
+            --f1-yellow: #FFFF00;
+            --f1-blue: #007bff;
+            --font-display: 'Orbitron', sans-serif; /* 用於標題和重要數據 */
+            --font-mono: 'Share Tech Mono', monospace; /* 用於小數據和程式碼感 */
+        }
 
-      /* Base "screen" */
-      --bg0: #05070a;
-      --bg1: #070b11;
-      --panel: rgba(10, 14, 22, .78);
-      --panel2: rgba(12, 18, 28, .72);
-      --border: rgba(180, 190, 210, .14);
-      --border2: rgba(255, 255, 255, .08);
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--f1-black-dark);
+            color: var(--f1-white);
+            font-family: var(--font-mono);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow: hidden; /* 防止滾動條影響整體視覺 */
+        }
 
-      --fg: #e6edf7;
-      --muted: rgba(230, 237, 247, .70);
-      --dim: rgba(230, 237, 247, .52);
+        /* 主容器佈局 */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 200px 1fr 250px; /* 左側導航, 中央內容, 右側側邊欄 */
+            grid-template-rows: auto 1fr; /* 頂部標題, 主內容 */
+            gap: 15px;
+            padding: 15px;
+            flex-grow: 1;
+        }
 
-      /* Mercedes 2024 vibe: carbon + silver + PETRONAS teal */
-      --accent: #00E5C8;     /* PETRONAS teal */
-      --accent2:#B7C3D0;     /* silver */
-      --accent3:#00A3FF;     /* electric blue */
-      --danger: #ff2b4a;
+        /* 頂部標題 */
+        .dashboard-header {
+            grid-column: 1 / -1; /* 佔滿所有列 */
+            background-color: var(--f1-black-medium);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--petronas-green);
+        }
+        .dashboard-header h1 {
+            font-family: var(--font-display);
+            color: var(--f1-white);
+            margin: 0;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+        }
+        .dashboard-header .status-indicator {
+            display: flex;
+            gap: 8px;
+        }
+        .status-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--f1-gray);
+            box-shadow: 0 0 5px var(--f1-gray);
+        }
+        .status-light.active { background-color: var(--petronas-green); box-shadow: 0 0 10px var(--petronas-green); }
+        .status-light.alert { background-color: var(--f1-red); box-shadow: 0 0 10px var(--f1-red); }
 
-      /* Sports types */
-      --run:  #00E5C8;
-      --bike: #00A3FF;
-      --swim: #B7C3D0;
+        /* 左側導航 (按鈕區) */
+        .dashboard-nav {
+            background-color: var(--f1-black-medium);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-right: 1px solid var(--f1-black-light);
+            border-radius: 5px;
+        }
 
-      /* LED */
-      --led: var(--accent);
+        /* 中央主內容區 */
+        .dashboard-main {
+            background-color: var(--f1-black-medium);
+            padding: 20px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .main-section-title {
+            font-family: var(--font-display);
+            color: var(--petronas-green);
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--f1-black-light);
+            padding-bottom: 5px;
+        }
+        .chart-container {
+            background-color: var(--f1-black-light);
+            border: 1px solid var(--petronas-green);
+            border-radius: 5px;
+            height: 300px; /* 圖表預留高度 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--f1-gray);
+            font-family: var(--font-display);
+            font-size: 1.2em;
+        }
 
-      /* Shadows/glow */
-      --glowA: 0 0 22px rgba(0,229,200,.35);
-      --glowB: 0 0 30px rgba(0,163,255,.22);
-      --shadow: 0 24px 70px rgba(0,0,0,.55);
-      --shadow2: 0 8px 26px rgba(0,0,0,.45);
+        /* 右側側邊欄 (簡要數據) */
+        .dashboard-sidebar {
+            background-color: var(--f1-black-medium);
+            padding: 15px;
+            border-left: 1px solid var(--f1-black-light);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .sidebar-metric {
+            background-color: var(--f1-black-light);
+            padding: 10px 15px;
+            border-left: 3px solid var(--f1-gray);
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            transition: border-left-color 0.3s;
+        }
+        .sidebar-metric.good { border-left-color: var(--petronas-green); }
+        .sidebar-metric.warning { border-left-color: var(--f1-yellow); }
+        .sidebar-metric.critical { border-left-color: var(--f1-red); }
 
-      /* Scanline intensity */
-      --scan: .14;
-      --noise: .06;
-    }
+        .metric-label {
+            color: var(--f1-gray);
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+        .metric-value {
+            font-family: var(--font-display);
+            color: var(--f1-white);
+            font-size: 1.3em;
+            letter-spacing: 0.5px;
+        }
 
-    /* =========================
-       BASE / BACKGROUND
-       ========================= */
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      color:var(--fg);
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-                   "PingFang TC","Noto Sans TC","Microsoft JhengHei", Arial, sans-serif;
-      background:
-        radial-gradient(1100px 650px at 14% 0%, rgba(0,229,200,.16), rgba(0,229,200,0) 60%),
-        radial-gradient(900px 520px at 86% 10%, rgba(0,163,255,.14), rgba(0,163,255,0) 60%),
-        radial-gradient(900px 520px at 60% 70%, rgba(183,195,208,.10), rgba(183,195,208,0) 60%),
-        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 60%, #04060a 100%);
-      overflow-x:hidden;
-    }
-    a{color:inherit; text-decoration:none}
+        /* 進度條 */
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--f1-black-dark);
+            border: 1px solid var(--f1-black-light);
+            border-radius: 3px;
+            height: 15px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%; /* 透過JS或CSS動畫設定 */
+            background: linear-gradient(90deg, var(--f1-blue), var(--petronas-green));
+            transition: width 0.5s ease-out;
+            border-radius: 3px;
+        }
+        .progress-bar.progress-75 { width: 75%; }
+        .progress-bar.progress-50 { width: 50%; background: linear-gradient(90deg, var(--f1-yellow), var(--petronas-green)); }
+        .progress-bar.progress-25 { width: 25%; background: linear-gradient(90deg, var(--f1-red), var(--f1-yellow)); }
 
-    .wrap{max-width:var(--max); margin:0 auto; padding:18px 14px 48px;}
 
-    /* Screen FX: scanlines + noise */
-    .fx{
-      position:fixed; inset:0; pointer-events:none; z-index:9999;
-      mix-blend-mode: overlay;
-      opacity:1;
-    }
-    .fx::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        repeating-linear-gradient(
-          180deg,
-          rgba(255,255,255,var(--scan)) 0px,
-          rgba(255,255,255,0) 2px,
-          rgba(255,255,255,0) 4px
-        );
-      opacity:.35;
-    }
-    .fx::after{
-      content:"";
-      position:absolute; inset:0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
-      opacity: var(--noise);
-    }
+        /* 按鈕樣式 (同前面提供) */
+        .f1-btn {
+            width: 100%; /* 適應導航欄寬度 */
+            padding: 12px 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease-in-out;
+            color: var(--f1-white);
+            font-size: 0.9em;
+            letter-spacing: 0.8px;
+            background-color: transparent; /* 預設透明，由各樣式定義 */
+            border-radius: 3px;
+            text-align: left;
+        }
+        .f1-btn span { /* 為Monitor Style的文字定位 */
+            display: inline-block;
+        }
 
-    /* =========================
-       TOP BAR
-       ========================= */
-    header{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding: 14px 14px;
-      border:1px solid var(--border);
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(12,18,28,.82), rgba(8,12,18,.72));
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(10px);
-      position:sticky; top:10px; z-index:50;
-    }
+        /* Style 1: 極速 Petronas (發光邊框) */
+        .btn-glow {
+            border: 1px solid rgba(0, 161, 155, 0.4);
+            box-shadow: inset 0 0 3px rgba(0, 161, 155, 0.2);
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 15px var(--petronas-green), inset 0 0 8px var(--petronas-green);
+            background: var(--petronas-green);
+            color: var(--f1-black-dark);
+            transform: translateY(-2px);
+        }
 
-    .brand{display:flex; align-items:center; gap:12px; min-width:0}
-    .logo{
-      width:44px; height:44px; border-radius:14px;
-      background:
-        radial-gradient(circle at 28% 28%, rgba(255,255,255,.22), rgba(255,255,255,0) 58%),
-        linear-gradient(135deg, rgba(183,195,208,.95) 0%, rgba(0,229,200,.85) 40%, rgba(0,163,255,.70) 100%);
-      box-shadow: var(--glowA);
-      position:relative; overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .logo:after{
-      content:"";
-      position:absolute; inset:-40px -70px auto auto;
-      width:160px; height:160px;
-      background: radial-gradient(circle at 30% 30%, rgba(0,229,200,.35), rgba(0,229,200,0) 62%);
-      transform: rotate(14deg);
-    }
+        /* Style 2: Carbon Core (碳纖維質感) */
+        .btn-carbon {
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--f1-black-light) 0px,
+                var(--f1-black-light) 2px,
+                var(--f1-black-dark) 2px,
+                var(--f1-black-dark) 4px
+            );
+            border-bottom: 3px solid #000;
+            position: relative;
+        }
+        .btn-carbon:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            box-shadow: inset 0 0 10px var(--petronas-green);
+        }
 
-    .titles{min-width:0}
-    .titles h1{margin:0; font-size:16px; letter-spacing:.4px}
-    .titles p{margin:4px 0 0; color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+        /* Style 3: Pit-Wall (數位監控) */
+        .btn-monitor {
+            background: var(--f1-black-light);
+            border-left: 4px solid var(--petronas-green);
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-monitor span:last-child {
+            font-family: var(--font-display);
+            font-size: 1.1em;
+            color: var(--petronas-green);
+        }
+        .btn-monitor:hover {
+            background: #2A2A2A;
+            padding-left: 20px;
+        }
+        .btn-monitor.alert { border-left-color: var(--f1-red); } /* 範例：數據異常時變紅 */
 
-    .right{display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px;
-      border:1px solid var(--border2);
-      background: rgba(255,255,255,.04);
-      border-radius:999px;
-      color:var(--muted);
-      font-size:12px;
-    }
-    .dot{width:8px; height:8px; border-radius:99px; background: #22c55e; box-shadow: 0 0 18px rgba(34,197,94,.22)}
+        /* Style 4: Tactile Switch (彩色旋鈕感) */
+        .btn-knob {
+            background: var(--f1-black-light);
+            border-radius: 20px; /* 稍微圓角矩形，更適合導航 */
+            border: 2px dashed rgba(255, 255, 0, 0.5); /* 黃色虛線 */
+            color: var(--f1-yellow);
+        }
+        .btn-knob:hover {
+            transform: rotate(2deg) scale(1.02); /* 輕微旋轉和放大 */
+            border-color: var(--f1-yellow);
+            color: var(--f1-black-dark);
+            background-color: var(--f1-yellow);
+            box-shadow: 0 0 10px var(--f1-yellow);
+        }
 
-    .btn{
-      border:1px solid var(--border2);
-      background: rgba(255,255,255,.04);
-      color:var(--fg);
-      padding:9px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-size:12px;
-      letter-spacing:.2px;
-      user-select:none;
-    }
-    .btn:hover{background: rgba(255,255,255,.07)}
-    .btn.primary{
-      border-color: rgba(0,229,200,.28);
-      background: linear-gradient(135deg, rgba(0,229,200,.90), rgba(0,163,255,.55));
-      color:#061018;
-      font-weight:950;
-      box-shadow: var(--glowA);
-    }
-    .btn.primary:hover{filter: brightness(1.02)}
+        /* Style 5: Aero Stream (流體動畫) */
+        .btn-aero {
+            background: linear-gradient(90deg, transparent, rgba(0, 161, 155, 0.5), transparent);
+            background-size: 300% 100%;
+            animation: flow 4s infinite linear;
+            border: 1px solid var(--petronas-green);
+            overflow: hidden; /* 確保流動效果不超出按鈕 */
+        }
+        @keyframes flow {
+            0% { background-position: 200% 0; }
+            100% { background-position: -100% 0; }
+        }
+        .btn-aero:hover {
+            animation-duration: 2s; /* Hover時流動加速 */
+            box-shadow: 0 0 15px var(--petronas-green);
+        }
 
-    /* Theme switch */
-    .themes{
-      display:flex; gap:8px; flex-wrap:wrap;
-      justify-content:flex-end;
-      margin-top:10px;
-    }
-    .themeBtn{
-      display:inline-flex; align-items:center; gap:10px;
-      padding:9px 12px;
-      border-radius:999px;
-      border:1px solid var(--border2);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      cursor:pointer;
-      font-size:12px;
-    }
-    .themeBtn:hover{background: rgba(255,255,255,.07)}
-    .themeBtn.active{
-      color: var(--fg);
-      border-color: rgba(0,229,200,.25);
-      box-shadow: var(--glowA);
-    }
-    .sw{display:flex; gap:5px}
-    .sw i{width:10px; height:10px; border-radius:99px; border:1px solid rgba(255,255,255,.10); display:inline-block}
-
-    /* =========================
-       MAIN LAYOUT
-       ========================= */
-    .grid{
-      display:grid;
-      grid-template-columns: 460px 1fr;
-      gap:14px;
-      margin-top:14px;
-      align-items:start;
-    }
-    .panel{
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(12,18,28,.82), rgba(8,12,18,.70));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-    }
-    .hd{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:14px 16px;
-      border-bottom:1px solid rgba(255,255,255,.07);
-    }
-    .hd h2{margin:0; font-size:12px; letter-spacing:.6px; text-transform:uppercase; color:rgba(230,237,247,.86)}
-    .hd .mode{
-      display:inline-flex; align-items:center; gap:8px;
-      color: var(--muted);
-      font-size:12px;
-    }
-    .hd .mode b{color: var(--fg); cursor:pointer; user-select:none}
-
-    .bd{padding:16px}
-
-    /* =========================
-       ELECTRONIC DASHBOARD
-       ========================= */
-    .dash{display:grid; gap:12px;}
-
-    .hudRow{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding: 10px 12px;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:14px;
-      background: rgba(255,255,255,.03);
-    }
-    .hudRow .left{min-width:0;}
-    .hudRow .label{
-      margin:0; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--muted);
-    }
-    .hudRow .desc{
-      margin:6px 0 0; font-size:12px; color:rgba(230,237,247,.86);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-
-    .ledBox{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      background:
-        radial-gradient(520px 140px at 10% 0%, rgba(0,229,200,.18), rgba(0,229,200,0) 60%),
-        radial-gradient(520px 140px at 90% 0%, rgba(0,163,255,.16), rgba(0,163,255,0) 60%),
-        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      padding: 14px;
-      position:relative;
-      overflow:hidden;
-      box-shadow: var(--shadow2);
-    }
-    /* soften decoration (no ugly big glass block) */
-    .ledBox:after{
-      content:"";
-      position:absolute;
-      inset:auto auto -120px -140px;
-      width:260px; height:260px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 30%, rgba(0,229,200,.14), rgba(0,229,200,0) 62%);
-      transform: rotate(0deg);
-      pointer-events:none;
-      opacity:.65;
-    }
-
-    .kpiGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-      margin-top:12px;
-    }
-
-    .kpi{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      background: rgba(255,255,255,.03);
-      padding:12px;
-      position:relative;
-      overflow:hidden;
-    }
-    .kpi .cap{
-      display:flex; align-items:center; justify-content:space-between;
-      color: rgba(230,237,247,.70);
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.6px;
-      text-transform:uppercase;
-      margin-bottom:10px;
-    }
-    .kpi .cap .unit{opacity:.75}
-
-    /* =========================
-       LED DOT MATRIX - CLEAR VERSION
-       ========================= */
-    .ledNum{
-      position: relative;
-      display: inline-block;
-      font-weight: 950;
-      font-size: 36px;             /* bigger */
-      letter-spacing: 2px;
-      line-height: 1;
-      color: color-mix(in srgb, var(--led) 92%, white);
-
-      /* glow: less blur, more crisp */
-      text-shadow:
-        0 0 6px  color-mix(in srgb, var(--led) 40%, transparent),
-        0 0 14px color-mix(in srgb, var(--led) 22%, transparent);
-
-      /* dot matrix: larger dots + spacing */
-      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 52%, rgba(0,0,0,0) 56%);
-      mask-image: radial-gradient(circle, rgba(0,0,0,1) 52%, rgba(0,0,0,0) 56%);
-      -webkit-mask-size: 7px 7px;
-      mask-size: 7px 7px;
-      -webkit-mask-repeat: repeat;
-      mask-repeat: repeat;
-
-      filter: contrast(1.15) saturate(1.05);
-    }
-    /* faint solid number behind for readability */
-    .ledNum::before{
-      content: attr(data-solid);
-      position:absolute;
-      inset: 0;
-      color: rgba(230, 237, 247, .18);
-      text-shadow: none;
-      -webkit-mask: none;
-      mask: none;
-      pointer-events:none;
-    }
-
-    .ledNum small{
-      font-size:14px;
-      letter-spacing:1px;
-      opacity:.80;
-      margin-left:6px;
-    }
-
-    .bar{
-      height:8px;
-      background: rgba(255,255,255,.10);
-      border-radius:999px;
-      overflow:hidden;
-      margin-top:10px;
-    }
-    .bar > i{
-      display:block; height:100%;
-      width: 50%;
-      background: linear-gradient(90deg, var(--accent), var(--accent3));
-      border-radius:999px;
-      box-shadow: var(--glowA);
-    }
-    .bar.bike > i{background: linear-gradient(90deg, var(--bike), var(--accent3)); box-shadow: var(--glowB)}
-    .bar.swim > i{background: linear-gradient(90deg, var(--swim), var(--accent)); box-shadow:none}
-    .bar.total > i{background: linear-gradient(90deg, var(--accent), var(--accent2));}
-
-    /* Today card + NEW HUD corner style */
-    .today{
-      border:1px dashed rgba(0,229,200,.22);
-      border-radius:16px;
-      background: rgba(0,229,200,.06);
-      padding:14px;
-      margin-top:12px;
-      position:relative;
-      overflow:hidden;
-    }
-    .today .t{margin:0; font-weight:950}
-    .today .d{margin:6px 0 0; color:var(--muted); font-size:12px}
-    .mini{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
-
-    /* Replace ugly block with clean HUD hatch */
-    .today::after{
-      content:"";
-      position:absolute;
-      right:-40px; bottom:-40px;
-      width:220px; height:220px;
-      border-radius: 24px;
-      border:1px solid rgba(255,255,255,.08);
-      background:
-        repeating-linear-gradient(
-          135deg,
-          rgba(255,255,255,.06) 0px,
-          rgba(255,255,255,.06) 2px,
-          rgba(255,255,255,0) 2px,
-          rgba(255,255,255,0) 10px
-        );
-      box-shadow: 0 0 0 1px rgba(0,229,200,.08) inset;
-      opacity: .55;
-      pointer-events:none;
-    }
-    .today::before{
-      content:"";
-      position:absolute;
-      right:18px; bottom:18px;
-      width:64px; height:64px;
-      border-right:2px solid rgba(0,229,200,.45);
-      border-bottom:2px solid rgba(0,229,200,.45);
-      border-radius: 6px;
-      opacity:.7;
-      pointer-events:none;
-    }
-
-    /* =========================
-       FEED (RACE HUD)
-       ========================= */
-    .feed{display:grid; gap:12px}
-
-    .act{
-      position:relative;
-      display:grid;
-      grid-template-columns: 64px 1fr;
-      gap:12px;
-      padding:14px 14px 14px 16px;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:16px;
-      background: rgba(255,255,255,.03);
-      overflow:hidden;
-    }
-    .act::before{
-      content:"";
-      position:absolute; left:0; top:0; bottom:0;
-      width:6px;
-      background: linear-gradient(180deg, var(--run), rgba(0,229,200,.18));
-      box-shadow: 0 0 22px rgba(0,229,200,.22);
-    }
-    .act.bike::before{
-      background: linear-gradient(180deg, var(--bike), rgba(0,163,255,.18));
-      box-shadow: 0 0 22px rgba(0,163,255,.18);
-    }
-    .act.swim::before{
-      background: linear-gradient(180deg, var(--swim), rgba(183,195,208,.14));
-      box-shadow: 0 0 22px rgba(183,195,208,.10);
-    }
-
-    .ic{
-      width:48px; height:48px; border-radius:14px;
-      display:grid; place-items:center;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      font-weight:950;
-      color: var(--fg);
-    }
-    .ic.run{box-shadow: 0 0 20px rgba(0,229,200,.16); border-color: rgba(0,229,200,.22)}
-    .ic.bike{box-shadow: 0 0 20px rgba(0,163,255,.14); border-color: rgba(0,163,255,.18)}
-    .ic.swim{box-shadow: 0 0 20px rgba(183,195,208,.10); border-color: rgba(183,195,208,.16)}
-
-    .act h3{
-      margin:0;
-      font-size:13px;
-      letter-spacing:.3px;
-    }
-    .meta{
-      margin:6px 0 0;
-      color: var(--muted);
-      font-size:12px;
-    }
-    .stats{
-      margin-top:10px;
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
-    .stat{
-      padding:7px 10px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      color: rgba(230,237,247,.92);
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
-    .rpe{color: var(--muted); font-weight:900;}
-    .rpe b{color: var(--fg)}
-
-    footer{
-      margin-top:14px;
-      color: rgba(230,237,247,.55);
-      font-size:12px;
-      text-align:center;
-      opacity:.95;
-    }
-
-    @media (max-width: 1060px){
-      header{position:static}
-      .grid{grid-template-columns: 1fr}
-      .themes{justify-content:flex-start}
-    }
-  </style>
+        /* RWD 基礎調整 */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr; /* 小螢幕下單列佈局 */
+                grid-template-rows: auto auto 1fr auto; /* 標題, 導航, 主內容, 側邊欄 */
+            }
+            .dashboard-nav {
+                flex-direction: row; /* 導航按鈕橫向排列 */
+                overflow-x: auto; /* 超出螢幕可滾動 */
+                padding-bottom: 5px;
+                border-right: none;
+                border-bottom: 1px solid var(--f1-black-light);
+                border-radius: 0;
+            }
+            .dashboard-nav .f1-btn {
+                min-width: 120px; /* 確保按鈕不會太窄 */
+                flex-shrink: 0; /* 防止被壓縮 */
+            }
+            .dashboard-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="fx"></div>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>ActiveLog <span style="color:var(--f1-gray);">/ F1 Edition</span></h1>
+            <div class="status-indicator">
+                <div class="status-light active"></div>
+                <div class="status-light"></div>
+                <div class="status-light alert"></div>
+                <span style="font-size:0.9em; margin-left:10px;">SYSTEM ONLINE</span>
+            </div>
+        </header>
 
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div class="titles">
-          <h1>Race Dash · Training</h1>
-          <p>Mercedes F1 2024 vibe · Carbon / Silver / PETRONAS Teal · 全頁儀表 HUD 風</p>
-        </div>
-      </div>
+        <nav class="dashboard-nav">
+            <button class="f1-btn btn-glow">My Activity</button>
+            <button class="f1-btn btn-carbon">Training Zones</button>
+            <button class="f1-btn btn-monitor"><span>Weekly TSS</span> <span>250</span></button>
+            <button class="f1-btn btn-knob">Settings</button>
+            <button class="f1-btn btn-aero">Export Data</button>
+        </nav>
 
-      <div class="right">
-        <span class="pill"><span class="dot"></span> Last sync: <span id="lastSync">—</span></span>
-        <a class="btn" href="log.html">LOG</a>
-        <a class="btn primary" href="add.html">+ ADD</a>
-      </div>
-    </header>
+        <main class="dashboard-main">
+            <h2 class="main-section-title">Performance Overview</h2>
+            <div class="chart-container">
+                <p>Chart Placeholder (e.g., Weekly Training Load Graph)</p>
+                </div>
 
-    <div class="themes" id="themes"></div>
+            <h2 class="main-section-title">Key Metrics</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px;">
+                <div class="sidebar-metric good">
+                    <span class="metric-label">Avg Pace (Run)</span>
+                    <span class="metric-value">5:15 /km</span>
+                </div>
+                <div class="sidebar-metric warning">
+                    <span class="metric-label">Bike Watts (30m Avg)</span>
+                    <span class="metric-value">220 W</span>
+                </div>
+                <div class="sidebar-metric critical">
+                    <span class="metric-label">Swim Pace (100m)</span>
+                    <span class="metric-value">1:45</span>
+                </div>
+                <div class="sidebar-metric good">
+                    <span class="metric-label">Total Elevation (Week)</span>
+                    <span class="metric-value">850 m</span>
+                </div>
+            </div>
+        </main>
 
-    <section class="grid" aria-label="Race Dashboard">
-      <!-- LEFT: DASH -->
-      <div class="panel">
-        <div class="hd">
-          <h2>Driver Display</h2>
-          <div class="mode">Drive mode: <b id="driveMode">QUALI</b></div>
-        </div>
+        <aside class="dashboard-sidebar">
+            <h2 class="main-section-title" style="font-size:1.2em;">Quick Stats</h2>
 
-        <div class="bd">
-          <div class="dash">
-            <div class="hudRow">
-              <div class="left">
-                <p class="label">Next session</p>
-                <p class="desc" id="todayLine">—</p>
-              </div>
-              <div class="right">
-                <button class="btn" id="markDone">DONE</button>
-                <button class="btn" id="exportJson">EXPORT</button>
-              </div>
+            <div class="sidebar-metric good">
+                <span class="metric-label">Last Activity</span>
+                <span class="metric-value">Bike Ride</span>
+                <span style="font-size:0.7em; color:var(--f1-gray);">2023-11-20 / 45km</span>
             </div>
 
-            <div class="ledBox">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-                <div>
-                  <div style="color:var(--muted); font-size:11px; letter-spacing:.6px; text-transform:uppercase;">Weekly Metrics</div>
-                  <div style="margin-top:6px; color:rgba(230,237,247,.86); font-size:12px;">
-                    Week <span id="weekTag" style="color:var(--fg); font-weight:950;"></span> · Targets + Progress
-                  </div>
-                </div>
-                <span class="pill">STATUS: <b style="color:var(--fg)">OK</b></span>
-              </div>
-
-              <div class="kpiGrid">
-                <div class="kpi">
-                  <div class="cap"><span>RUN</span><span class="unit">KM</span></div>
-                  <div class="ledNum" id="runKm" data-solid="0km">0<small>km</small></div>
-                  <div class="bar"><i id="barRun"></i></div>
-                </div>
-
-                <div class="kpi">
-                  <div class="cap"><span>BIKE</span><span class="unit">HR</span></div>
-                  <div class="ledNum" id="bikeHr" data-solid="0hr">0<small>hr</small></div>
-                  <div class="bar bike"><i id="barBike"></i></div>
-                </div>
-
-                <div class="kpi">
-                  <div class="cap"><span>SWIM</span><span class="unit">M</span></div>
-                  <div class="ledNum" id="swimM" data-solid="0m">0<small>m</small></div>
-                  <div class="bar swim"><i id="barSwim"></i></div>
-                </div>
-
-                <div class="kpi">
-                  <div class="cap"><span>TOTAL</span><span class="unit">HR</span></div>
-                  <div class="ledNum" id="totalHr" data-solid="0hr">0<small>hr</small></div>
-                  <div class="bar total"><i id="barTotal"></i></div>
-                </div>
-              </div>
-
-              <div class="today">
-                <p class="t" id="todayName">—</p>
-                <p class="d" id="todayDesc">—</p>
-                <div class="mini">
-                  <span class="pill">RUN target: <b id="goalRun">—</b>km</span>
-                  <span class="pill">BIKE target: <b id="goalBike">—</b>hr</span>
-                  <span class="pill">SWIM target: <b id="goalSwim">—</b>m</span>
-                </div>
-              </div>
+            <div class="sidebar-metric warning">
+                <span class="metric-label">Marathon Target Progress</span>
+                <span class="metric-value">75%</span>
+                <div class="progress-bar-container"><div class="progress-bar progress-75"></div></div>
             </div>
 
-            <footer>
-              Tip: 先把資料存 localStorage，之後再接 Google Sheet / Garmin 匯入。
-            </footer>
-          </div>
-        </div>
-      </div>
+            <div class="sidebar-metric">
+                <span class="metric-label">Next Race</span>
+                <span class="metric-value">Triathlon</span>
+                <span style="font-size:0.7em; color:var(--f1-gray);">2024-03-15 / Taipei</span>
+            </div>
 
-      <!-- RIGHT: FEED -->
-      <div class="panel">
-        <div class="hd">
-          <h2>Telemetry Feed</h2>
-          <div class="mode">Window: <b>7d</b></div>
-        </div>
-        <div class="bd">
-          <div class="feed" id="feed"></div>
-        </div>
-        <footer>© <span id="year"></span> Race Dash</footer>
-      </div>
-    </section>
-  </div>
-
-  <script>
-    // =========================
-    // THEMES (Mercedes + 4 alternatives)
-    // =========================
-    const THEMES = [
-      {
-        id:"mercedes24",
-        name:"Mercedes 24",
-        sw:["#00E5C8","#B7C3D0","#00A3FF"],
-        vars:{
-          "--accent":"#00E5C8",
-          "--accent2":"#B7C3D0",
-          "--accent3":"#00A3FF",
-          "--led":"#00E5C8",
-          "--run":"#00E5C8",
-          "--bike":"#00A3FF",
-          "--swim":"#B7C3D0",
-          "--scan":".14",
-          "--noise":".06"
-        }
-      },
-      {
-        id:"qualifying",
-        name:"Quali Teal",
-        sw:["#00E5C8","#00FFD1","#0B1220"],
-        vars:{
-          "--accent":"#00E5C8",
-          "--accent2":"#00FFD1",
-          "--accent3":"#0EA5FF",
-          "--led":"#00FFD1",
-          "--run":"#00FFD1",
-          "--bike":"#0EA5FF",
-          "--swim":"#B7C3D0",
-          "--scan":".16",
-          "--noise":".07"
-        }
-      },
-      {
-        id:"nightOps",
-        name:"Night Ops",
-        sw:["#B7FF00","#7C3AED","#00D4FF"],
-        vars:{
-          "--accent":"#B7FF00",
-          "--accent2":"#7C3AED",
-          "--accent3":"#00D4FF",
-          "--led":"#B7FF00",
-          "--run":"#B7FF00",
-          "--bike":"#00D4FF",
-          "--swim":"#B7C3D0",
-          "--scan":".18",
-          "--noise":".08"
-        }
-      },
-      {
-        id:"carbonGold",
-        name:"Carbon Gold",
-        sw:["#F5B301","#111827","#00E5C8"],
-        vars:{
-          "--accent":"#F5B301",
-          "--accent2":"#B7C3D0",
-          "--accent3":"#00E5C8",
-          "--led":"#F5B301",
-          "--run":"#F5B301",
-          "--bike":"#00E5C8",
-          "--swim":"#B7C3D0",
-          "--scan":".13",
-          "--noise":".06"
-        }
-      },
-      {
-        id:"alertRed",
-        name:"Alert Red",
-        sw:["#ff2b4a","#00E5C8","#00A3FF"],
-        vars:{
-          "--accent":"#ff2b4a",
-          "--accent2":"#00E5C8",
-          "--accent3":"#00A3FF",
-          "--led":"#ff2b4a",
-          "--run":"#ff2b4a",
-          "--bike":"#00A3FF",
-          "--swim":"#B7C3D0",
-          "--scan":".18",
-          "--noise":".08"
-        }
-      }
-    ];
-
-    const THEME_KEY = "race_dash_theme_v2";
-
-    function setVar(k,v){ document.documentElement.style.setProperty(k,v); }
-    function applyTheme(themeId){
-      const t = THEMES.find(x=>x.id===themeId) || THEMES[0];
-      Object.entries(t.vars).forEach(([k,v])=>setVar(k,v));
-      localStorage.setItem(THEME_KEY, t.id);
-      renderThemes(t.id);
-    }
-    function renderThemes(activeId){
-      const host = document.getElementById("themes");
-      host.innerHTML = THEMES.map(t => `
-        <button class="themeBtn ${t.id===activeId?'active':''}" data-theme="${t.id}">
-          <span class="sw">
-            <i style="background:${t.sw[0]}"></i>
-            <i style="background:${t.sw[1]}"></i>
-            <i style="background:${t.sw[2]}"></i>
-          </span>
-          ${t.name}
-        </button>
-      `).join("");
-      host.querySelectorAll("[data-theme]").forEach(btn=>{
-        btn.addEventListener("click", ()=> applyTheme(btn.getAttribute("data-theme")));
-      });
-    }
-
-    // init theme
-    applyTheme(localStorage.getItem(THEME_KEY) || "mercedes24");
-
-    // =========================
-    // SAMPLE DATA
-    // =========================
-    const data = {
-      lastSync: new Date().toISOString().slice(0,10),
-      goals: { runKm: 35, bikeHr: 4.5, swimM: 3000, totalHr: 9.0 },
-      weekly: { runKm: 22, bikeHr: 3.5, swimM: 3200, totalHr: 7.0 },
-      today: {
-        name: "今天：跑步｜間歇 10K",
-        desc: "5×800m @ 3:45/km，組間休 2'；含熱身收操"
-      },
-      activities: [
-        { date:"2026-01-22", type:"Run",  title:"Interval Run",  dist:"11 km",  time:"55:10", elev:"+85 m", rpe:8, note:"5×800m interval" },
-        { date:"2026-01-21", type:"Swim", title:"Pool Workout",  dist:"1800 m", time:"45:00", elev:"—",    rpe:6, note:"Drills + steady" },
-        { date:"2026-01-20", type:"Bike", title:"Trainer Tempo", dist:"75 min", time:"75:00", elev:"—",    rpe:7, note:"Tempo blocks" },
-        { date:"2026-01-19", type:"Run",  title:"Easy Run",      dist:"5 km",   time:"33:20", elev:"+30 m",rpe:5, note:"Keep Z2" },
-        { date:"2026-01-18", type:"Bike", title:"Z2 Endurance",  dist:"60 min", time:"60:00", elev:"—",    rpe:6, note:"Cadence focus" },
-        { date:"2026-01-17", type:"Swim", title:"Mixed Drills",  dist:"1400 m", time:"40:00", elev:"—",    rpe:7, note:"Technique + intervals" },
-      ]
-    };
-
-    const $ = (id)=>document.getElementById(id);
-    $("year").textContent = new Date().getFullYear();
-    $("lastSync").textContent = data.lastSync;
-
-    $("goalRun").textContent = data.goals.runKm;
-    $("goalBike").textContent = data.goals.bikeHr;
-    $("goalSwim").textContent = data.goals.swimM;
-
-    $("todayLine").textContent = data.today.name;
-    $("todayName").textContent = data.today.name;
-    $("todayDesc").textContent = data.today.desc;
-
-    $("weekTag").textContent = "W" + getWeekNumber(new Date());
-
-    // LED values + solid fallback text for clarity
-    const runEl = $("runKm");
-    runEl.setAttribute("data-solid", `${data.weekly.runKm}km`);
-    runEl.innerHTML = `${data.weekly.runKm}<small>km</small>`;
-
-    const bikeEl = $("bikeHr");
-    bikeEl.setAttribute("data-solid", `${data.weekly.bikeHr}hr`);
-    bikeEl.innerHTML = `${data.weekly.bikeHr}<small>hr</small>`;
-
-    const swimEl = $("swimM");
-    swimEl.setAttribute("data-solid", `${data.weekly.swimM}m`);
-    swimEl.innerHTML = `${data.weekly.swimM.toLocaleString()}<small>m</small>`;
-
-    const totEl = $("totalHr");
-    totEl.setAttribute("data-solid", `${data.weekly.totalHr}hr`);
-    totEl.innerHTML = `${data.weekly.totalHr}<small>hr</small>`;
-
-    // Progress bars
-    function pct(v,g){
-      if (!g || g<=0) return 0;
-      return Math.max(0, Math.min(100, Math.round((v/g)*100)));
-    }
-    $("barRun").style.width   = pct(data.weekly.runKm,  data.goals.runKm)  + "%";
-    $("barBike").style.width  = pct(data.weekly.bikeHr, data.goals.bikeHr) + "%";
-    $("barSwim").style.width  = pct(data.weekly.swimM,  data.goals.swimM)  + "%";
-    $("barTotal").style.width = pct(data.weekly.totalHr,data.goals.totalHr)+ "%";
-
-    // Feed render
-    function iconFor(type){
-      if (type==="Run") return "R";
-      if (type==="Bike") return "B";
-      if (type==="Swim") return "S";
-      return "•";
-    }
-    function cls(type){
-      if (type==="Run") return "run";
-      if (type==="Bike") return "bike";
-      if (type==="Swim") return "swim";
-      return "";
-    }
-    $("feed").innerHTML = data.activities.map(a => `
-      <div class="act ${cls(a.type)}">
-        <div class="ic ${cls(a.type)}" aria-hidden="true">${iconFor(a.type)}</div>
-        <div>
-          <h3>${a.title} <span class="rpe">· RPE <b>${a.rpe}</b></span></h3>
-          <div class="meta">${a.date} · ${a.type} · ${a.note}</div>
-          <div class="stats">
-            <span class="stat">${a.dist}</span>
-            <span class="stat">${a.time}</span>
-            <span class="stat">${a.elev}</span>
-          </div>
-        </div>
-      </div>
-    `).join("");
-
-    // Done state
-    const DONE_KEY="race_dash_done_v2";
-    function refreshDone(){
-      const done = localStorage.getItem(DONE_KEY)==="1";
-      $("markDone").textContent = done ? "DONE ✅" : "DONE";
-      $("markDone").style.opacity = done ? "0.72" : "1";
-    }
-    $("markDone").addEventListener("click", ()=>{
-      const done = localStorage.getItem(DONE_KEY)==="1";
-      localStorage.setItem(DONE_KEY, done ? "0" : "1");
-      refreshDone();
-    });
-    refreshDone();
-
-    // Export
-    $("exportJson").addEventListener("click", ()=>{
-      const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href=url; a.download="race-dash-sample.json";
-      document.body.appendChild(a);
-      a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    });
-
-    // Drive mode flip (fun)
-    const modes = ["QUALI","RACE","ENDURO","RECOVERY"];
-    let mi = 0;
-    $("driveMode").addEventListener("click", ()=>{
-      mi = (mi+1)%modes.length;
-      $("driveMode").textContent = modes[mi];
-    });
-
-    function getWeekNumber(d){
-      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      const dayNum = date.getUTCDay() || 7;
-      date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-      const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-      return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
-    }
-  </script>
+            <div class="sidebar-metric critical">
+                <span class="metric-label">Recovery Score</span>
+                <span class="metric-value">55 / 100</span>
+                <div class="progress-bar-container"><div class="progress-bar progress-50"></div></div>
+            </div>
+        </aside>
+    </div>
 </body>
 </html>
